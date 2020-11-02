@@ -1,6 +1,15 @@
-<?php include_once("header.php")?>
+<?php include_once("header.php");
+include_once("pdo.php")
+?>
 <?php require("utilities.php")?>
+<?php 
+$stmt = $pdo->query("SELECT userID FROM Users");
+while ( $row = $stmt->fetch(PDO::FETCH_ASSOC) ) {
+    echo "<tr><td>";
+    echo(htmlentities($row['userID']));
 
+}
+?>
 <div class="container">
 
 <h2 class="my-3">Browse listings</h2>
