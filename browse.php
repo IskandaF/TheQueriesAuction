@@ -1,5 +1,6 @@
 <?php include_once("header.php");
-include_once("pdo.php")
+include_once("pdo.php");
+session_start();
 ?>
 <?php require("utilities.php")?>
 <?php 
@@ -8,6 +9,17 @@ while ( $row = $stmt->fetch(PDO::FETCH_ASSOC) ) {
     echo "<tr><td>";
     echo(htmlentities($row['userID']));
 
+}
+?>
+
+<?php
+if ($_SESSION["success"]){
+  echo '<p style="color:green">'.$_SESSION['success']."</p>\n";
+  unset($_SESSION['success']);
+}
+else {
+  echo($_SESSION['fail']);
+  unset($_SESSION['fail']);
 }
 ?>
 <div class="container">
