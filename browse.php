@@ -1,13 +1,18 @@
 <?php include_once("header.php");
-include_once("pdo.php");
+include_once("mysqli.php");
 session_start();
 ?>
 <?php require("utilities.php")?>
 <?php 
-$stmt = $pdo->query("SELECT userID FROM Users");
-while ( $row = $stmt->fetch(PDO::FETCH_ASSOC) ) {
-    echo "<tr><td>";
-    echo(htmlentities($row['userID']));
+
+$query = "SELECT userID FROM Users";
+$result = mysqli_query($connection,$query)
+or die('Error making select users query' .
+mysql_error());
+
+$row = mysqli_fetch_array($result);
+while ($row = mysqli_fetch_array($result)) {
+    echo(htmlentities($row["userID"]));
 
 }
 ?>
