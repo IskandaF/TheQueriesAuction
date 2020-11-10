@@ -2,7 +2,7 @@
 <?php
 // session_start(); 
 include_once("header.php");
-require_once ("pdo.php");
+require_once ("mysqli.php");
 
 ?>
 

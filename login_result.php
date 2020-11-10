@@ -8,15 +8,37 @@
 
 <?php
     session_start();
-require_once ("pdo.php");
+require_once ("mysqli.php");
 
-if ( isset($_POST['email']) && isset($_POST['password'])  ) {
+if ($_SERVER["REQUEST_METHOD"] == "POST"){
+		if ((isset($_POST["email"],$_POST["password"])) && ((strlen($_POST["email"])>0)&&(strlen($_POST["password"])>0)))  {
     
- //          $sql = "SELECT password FROM Users 
- //        WHERE password = :pw";
+          $query = "SELECT email,password FROM Users 
+        WHERE password = ? AND email=?";
 
 
- //    $stmt = $pdo->prepare($sql);
+
+$stmt = $connection->prepare("SELECT * FROM Users WHERE email = ?");
+// $stmt->bind_param(":email",$email);
+$stmt->bind_param("s",$email);
+
+$email=strval($_POST['email']);
+$password=$_POST['password'];
+
+$stmt->execute();
+$result = $stmt->get_result();
+
+$row = mysqli_fetch_array($result);
+if(password_verify($password, $row["password"])){
+	echo "Logged in";
+	header("refresh:2;url=index.php");
+	$_SESSION["success"]="You're logged in now";
+    $_SESSION['logged_in'] = true;
+	$_SESSION['username'] = $_POST["email"];
+	$_SESSION['account_type'] = "buyer";
+	return;
+}
+
  //    $stmt->execute(array(
         
  //        ':pw' => $_POST['password']));
@@ -38,21 +60,19 @@ if ( isset($_POST['email']) && isset($_POST['password'])  ) {
 	// echo('<div class="text-center">You are now logged in! You will be redirected shortly.</div>');
 
 	// Redirect to index after 5 seconds
-	echo "Logged in";
-	header("refresh:2;url=index.php");
-	$_SESSION["success"]="You're logged in now";
-	return;
 
+else{
+    header("location:browse.php");
+    	   $_SESSION["fail"]="Wrong email or password";
+
+ 
     }
-
-    else{
-    	echo("Doesn't work");
-    }
-
-    ;
+}}
 
 
-
+else{
+	"Nothing";
+}
 
 
 ?>

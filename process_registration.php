@@ -5,24 +5,36 @@
 // options.
 
 <?php
-require_once ("pdo.php");
-session_start(); 
+require_once ("mysqli.php"); 
+// require_once ("sendEmail.php"); 
+
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
-		echo($_POST['submit']);
-		echo ($_POST["email"]);
+		if ((isset($_POST["email"],$_POST["password"])) && ((strlen($_POST["email"])>0)&&(strlen($_POST["password"])>0))) {
 		$_SESSION['success'] = 'The values were set';
-	    $sql = "INSERT INTO Users (email, password)
-	              VALUES (:email, :password)";
-	    $stmt = $pdo->prepare($sql);
-	    $_SESSION['success'] = 'The values were prepared';
-	    $stmt->execute(array(
-	        
-	        ':email' => $_POST["email"],
-	        ':password' => $_POST["password"]
-	    	));
+	    // $stmt = $connection->prepare("INSERT INTO Users (email, password) VALUES (?, ?)");
+	    // $stmt->bind_param("ss", $email, $password);
+	    $email=$_POST['email'];
+	    $password=password_hash($_POST['password'], PASSWORD_DEFAULT);
+	    // $password=$_POST['password'];
+	    $stmt="INSERT INTO Users (email, password) VALUES ('".$email."', '".$password."')";
+	    if ($connection->query($stmt) === TRUE) {
+		  echo "New record created successfully";
+
+		} else {
+		  echo "Error: " . $stmt . "<br>" . $connection->error;
+		}
+
+		$connection->close();
+		echo "It's all fine";
 	    $_SESSION['success'] = 'Record Added';
-	    header( 'Location: browse.php' ) ;
+	    // header( 'Location: login.php' ) ;
+
 	    return;
+	}
+	else{
+		header('Location: registration.php') ;
+		$_SESSION['fail']="Please enter values";
+	}
 
 
 }

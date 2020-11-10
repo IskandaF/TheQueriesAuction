@@ -3,8 +3,12 @@
   // But eventually, with a database, these should be set automatically
   // ONLY after the user's login credentials have been verified via a 
   // database query.
-  session_start();
-  $_SESSION['logged_in'] = false;
+  session_start([
+    'cookie_lifetime' => 86400,
+]);
+
+  // if ($_SESSION['logged_in']==true) {
+  // $_SESSION['logged_in'] = false;}
   $_SESSION['account_type'] = 'seller';
 ?>
 
@@ -38,6 +42,7 @@
   // Displays either login or logout on the right, depending on user's
   // current status (session).
   if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true) {
+    echo "<p>Hello, ".$_SESSION["username"];
     echo '<a class="nav-link" href="logout.php">Logout</a>';
   }
   else {

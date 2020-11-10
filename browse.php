@@ -1,28 +1,29 @@
 <?php include_once("header.php");
 include_once("mysqli.php");
-session_start();
+    if(!isset($_SESSION)) 
+    { 
+        session_start(); 
+    } 
 ?>
-<?php require("utilities.php")?>
 <?php 
+require("utilities.php");
 
-$query = "SELECT userID FROM Users";
-$result = mysqli_query($connection,$query)
-or die('Error making select users query' .
-mysql_error());
+// $query = "SELECT userID FROM Users";
+// $result = mysqli_query($connection,$query)
+// or die('Error making select users query' .
+// mysql_error());
 
-$row = mysqli_fetch_array($result);
-while ($row = mysqli_fetch_array($result)) {
-    echo(htmlentities($row["userID"]));
+// $row = mysqli_fetch_array($result);
+// while ($row = mysqli_fetch_array($result)) {
+//     echo(htmlentities($row["userID"]));
 
-}
-?>
+// }
 
-<?php
-if ($_SESSION["success"]){
+if (isset($_SESSION["success"])){
   echo '<p style="color:green">'.$_SESSION['success']."</p>\n";
   unset($_SESSION['success']);
 }
-else {
+if (isset($_SESSION["fail"])){
   echo($_SESSION['fail']);
   unset($_SESSION['fail']);
 }
@@ -148,9 +149,9 @@ else {
   $description = "Very short description.";
   $current_price = 13.50;
   $num_bids = 3;
-  $end_date = new DateTime('2020-11-02T00:00:00');
+  $end_time = new DateTime('2020-11-22T00:00:00');
   
-  print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
+  print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_time);
 ?>
 
 </ul>
