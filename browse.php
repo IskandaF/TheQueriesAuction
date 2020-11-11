@@ -1,29 +1,28 @@
 <?php include_once("header.php");
 include_once("mysqli.php");
-    if(!isset($_SESSION)) 
-    { 
-        session_start(); 
-    } 
+session_start();
 ?>
-<?php 
-require("utilities.php");
+<?php require("utilities.php")?>
+<?php
 
-// $query = "SELECT userID FROM Users";
-// $result = mysqli_query($connection,$query)
-// or die('Error making select users query' .
-// mysql_error());
+$query = "SELECT userID FROM Users";
+$result = mysqli_query($connection,$query)
+or die('Error making select users query' .
+mysql_error());
 
-// $row = mysqli_fetch_array($result);
-// while ($row = mysqli_fetch_array($result)) {
-//     echo(htmlentities($row["userID"]));
+$row = mysqli_fetch_array($result);
+while ($row = mysqli_fetch_array($result)) {
+    echo(htmlentities($row["userID"]));
 
-// }
+}
+?>
 
-if (isset($_SESSION["success"])){
+<?php
+if ($_SESSION["success"]){
   echo '<p style="color:green">'.$_SESSION['success']."</p>\n";
   unset($_SESSION['success']);
 }
-if (isset($_SESSION["fail"])){
+else {
   echo($_SESSION['fail']);
   unset($_SESSION['fail']);
 }
@@ -97,14 +96,14 @@ if (isset($_SESSION["fail"])){
   else {
     $category = $_GET['cat'];
   }
-  
+
   if (!isset($_GET['order_by'])) {
     // TODO: Define behavior if an order_by value has not been specified.
   }
   else {
     $ordering = $_GET['order_by'];
   }
-  
+
   if (!isset($_GET['page'])) {
     $curr_page = 1;
   }
@@ -112,10 +111,10 @@ if (isset($_SESSION["fail"])){
     $curr_page = $_GET['page'];
   }
 
-  /* TODO: Use above values to construct a query. Use this query to 
+  /* TODO: Use above values to construct a query. Use this query to
      retrieve data from the database. (If there is no form data entered,
      decide on appropriate default value/default query to make. */
-  
+
   /* For the purposes of pagination, it would also be helpful to know the
      total number of results that satisfy the above query */
   $num_results = 96; // TODO: Calculate me for real
@@ -133,25 +132,43 @@ if (isset($_SESSION["fail"])){
      retrieved from the query -->
 
 <?php
+
+  $stmt1 = "SELECT i.itemID, i.title, i.description, b.bidValue, i.closeDate FROM Items i, Bids b WHERE i.highestbidID = b.bidID ORDER BY itemID DESC";
+  $result1 = mysqli_query($connection, $stmt1);
+
+
+  while ($row1 = $result1->fetch_assoc()) {
+    $item_id = $row1['itemID'];
+
+    $stmt2 = "SELECT COUNT(bidID) as c FROM Bids WHERE itemID = $item_id";
+    $result2 = mysqli_query($connection, $stmt2);
+    $row2 = mysqli_fetch_array($result2);
+
+    $title = $row1['title'];
+    $description = $row1['description'];
+    $current_price = $row1['bidValue'];
+    $num_bids = $row2['c'];
+    $end_time = new DateTime($row1['closeDate']);
+
+    // This uses a function defined in utilities.php
+    print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_time);
+  };
+
+
+?>
+
+<?php
   // Demonstration of what listings will look like using dummy data.
-  $item_id = "87021";
-  $title = "Dummy title";
-  $description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum eget rutrum ipsum. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Phasellus feugiat, ipsum vel egestas elementum, sem mi vestibulum eros, et facilisis dui nisi eget metus. In non elit felis. Ut lacus sem, pulvinar ultricies pretium sed, viverra ac sapien. Vivamus condimentum aliquam rutrum. Phasellus iaculis faucibus pellentesque. Sed sem urna, maximus vitae cursus id, malesuada nec lectus. Vestibulum scelerisque vulputate elit ut laoreet. Praesent vitae orci sed metus varius posuere sagittis non mi.";
-  $current_price = 30;
-  $num_bids = 1;
-  $end_date = new DateTime('2020-09-16T11:00:00');
-  
-  // This uses a function defined in utilities.php
-  print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
-  
+
+
   $item_id = "516";
   $title = "Different title";
   $description = "Very short description.";
   $current_price = 13.50;
   $num_bids = 3;
-  $end_time = new DateTime('2020-11-22T00:00:00');
-  
-  print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_time);
+  $end_date = new DateTime('2020-11-02T00:00:00');
+
+  print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
 ?>
 
 </ul>
@@ -159,7 +176,7 @@ if (isset($_SESSION["fail"])){
 <!-- Pagination for results listings -->
 <nav aria-label="Search results pages" class="mt-5">
   <ul class="pagination justify-content-center">
-  
+
 <?php
 
   // Copy any currently-set GET variables to the URL.
@@ -169,12 +186,12 @@ if (isset($_SESSION["fail"])){
       $querystring .= "$key=$value&amp;";
     }
   }
-  
+
   $high_page_boost = max(3 - $curr_page, 0);
   $low_page_boost = max(2 - ($max_page - $curr_page), 0);
   $low_page = max(1, $curr_page - 2 - $low_page_boost);
   $high_page = min($max_page, $curr_page + 2 + $high_page_boost);
-  
+
   if ($curr_page != 1) {
     echo('
     <li class="page-item">
@@ -184,7 +201,7 @@ if (isset($_SESSION["fail"])){
       </a>
     </li>');
   }
-    
+
   for ($i = $low_page; $i <= $high_page; $i++) {
     if ($i == $curr_page) {
       // Highlight the link
@@ -196,13 +213,13 @@ if (isset($_SESSION["fail"])){
       echo('
     <li class="page-item">');
     }
-    
+
     // Do this in any case
     echo('
       <a class="page-link" href="browse.php?' . $querystring . 'page=' . $i . '">' . $i . '</a>
     </li>');
   }
-  
+
   if ($curr_page != $max_page) {
     echo('
     <li class="page-item">
