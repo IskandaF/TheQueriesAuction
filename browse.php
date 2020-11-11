@@ -1,6 +1,8 @@
 <?php include_once("header.php");
 include_once("mysqli.php");
+if (session_status() == PHP_SESSION_NONE){
 session_start();
+};
 ?>
 <?php require("utilities.php")?>
 <?php
@@ -18,12 +20,14 @@ while ($row = mysqli_fetch_array($result)) {
 ?>
 
 <?php
-if ($_SESSION["success"]){
+
+
+if (isset($_SESSION["success"])){
   echo '<p style="color:green">'.$_SESSION['success']."</p>\n";
   unset($_SESSION['success']);
 }
-else {
-  echo($_SESSION['fail']);
+if (isset($_SESSION["fail"])) {
+  echo '<p style="color:red">'.$_SESSION['fail']."</p>\n";
   unset($_SESSION['fail']);
 }
 ?>
