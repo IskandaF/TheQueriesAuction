@@ -1,8 +1,6 @@
 <?php include_once("header.php");
 include_once("mysqli.php");
-if (session_status() == PHP_SESSION_NONE){
 session_start();
-};
 ?>
 <?php require("utilities.php")?>
 <?php
@@ -20,14 +18,12 @@ while ($row = mysqli_fetch_array($result)) {
 ?>
 
 <?php
-
-
-if (isset($_SESSION["success"])){
+if ($_SESSION["success"]){
   echo '<p style="color:green">'.$_SESSION['success']."</p>\n";
   unset($_SESSION['success']);
 }
-if (isset($_SESSION["fail"])) {
-  echo '<p style="color:red">'.$_SESSION['fail']."</p>\n";
+else {
+  echo($_SESSION['fail']);
   unset($_SESSION['fail']);
 }
 ?>
@@ -121,7 +117,17 @@ if (isset($_SESSION["fail"])) {
 
   /* For the purposes of pagination, it would also be helpful to know the
      total number of results that satisfy the above query */
-  $num_results = 96; // TODO: Calculate me for real
+
+
+
+  //Elina - copy this query to use in mylistings.php
+  $stmt1 = "SELECT i.itemID, i.title, i.description, b.bidValue, i.closeDate, b.bidID FROM Items i, Bids b WHERE i.highestbidID = b.bidID ORDER BY itemID DESC";
+  $result1 = mysqli_query($connection, $stmt1);
+
+  echo mysqli_num_rows($result1) . ' results found.';
+
+
+  $num_results = mysqli_num_rows($result1);
   $results_per_page = 10;
   $max_page = ceil($num_results / $results_per_page);
 ?>
@@ -137,11 +143,10 @@ if (isset($_SESSION["fail"])) {
 
 <?php
 
-  $stmt1 = "SELECT i.itemID, i.title, i.description, b.bidValue, i.closeDate FROM Items i, Bids b WHERE i.highestbidID = b.bidID ORDER BY itemID DESC";
-  $result1 = mysqli_query($connection, $stmt1);
 
 
-  while ($row1 = $result1->fetch_assoc()) {
+// Elina - copy this code to use in mylistings.php
+  while ($row1 = $result1->fetch_assoc()) { // Add a clause in this while loop that says 'AND b.bidderUserID = userID'
     $item_id = $row1['itemID'];
 
     $stmt2 = "SELECT COUNT(bidID) as c FROM Bids WHERE itemID = $item_id";
@@ -158,13 +163,14 @@ if (isset($_SESSION["fail"])) {
     print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_time);
   };
 
+// end of browse code for mylistings.php
 
 ?>
 
 <?php
   // Demonstration of what listings will look like using dummy data.
 
-
+  /*
   $item_id = "516";
   $title = "Different title";
   $description = "Very short description.";
@@ -173,6 +179,7 @@ if (isset($_SESSION["fail"])) {
   $end_date = new DateTime('2020-11-02T00:00:00');
 
   print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
+  */
 ?>
 
 </ul>
