@@ -7,15 +7,20 @@
 <?php
   // Get info from the URL:
   $item_id = $_GET['item_id'];
-  
+  $_SESSION['itemID'] = $item_id;
 
-  $stmt1 = "SELECT i.itemID, i.title, i.description, b.bidValue, i.closeDate FROM Items i, Bids b WHERE i.highestbidID = b.bidID AND i.itemID = $item_id";
+
+  $stmt1 = "SELECT i.itemID, i.reservePrice, i.title, i.description, b.bidValue, i.closeDate, i.sellerID, b.bidID, b.bidderUserID FROM Items i, Bids b WHERE i.highestbidID = b.bidID AND i.itemID = $item_id";
   $result1 = mysqli_query($connection, $stmt1);
   $row1 = mysqli_fetch_array($result1);
 
   $stmt2 = "SELECT COUNT(bidID) as c FROM Bids WHERE itemID = $item_id";
   $result2 = mysqli_query($connection, $stmt2);
   $row2 = mysqli_fetch_array($result2);
+
+  $useridquery = "SELECT * FROM Users WHERE email = '" . $_SESSION['username'] . "' ";
+  $useridresult = mysqli_query($connection, $useridquery);
+  $useridrow = mysqli_fetch_array($useridresult);
 
   // TODO: Use item_id to make a query to the database.
 
@@ -26,6 +31,21 @@
   $current_price = $row1['bidValue'];
   $num_bids = $row2['c'];
   $end_time = new DateTime($row1['closeDate']);
+  $reserve_price = $row1['reservePrice'];
+  $seller_id = $row1['sellerID'];
+  $currentuserID = $useridrow['userID'];
+  $highestbidderID = $row1['bidderUserID'];
+
+
+
+
+
+  $_SESSION['currentPrice'] = $current_price;
+  $_SESSION['reservePrice'] = $reserve_price;
+  $_SESSION['sellerID'] = $seller_id;
+
+
+
 
   // TODO: Note: Auctions that have ended may pull a different set of data,
   //       like whether the auction ended in a sale or was cancelled due
@@ -89,13 +109,19 @@
      Auction ends <?php echo(date_format($end_time, 'j M H:i') . $time_remaining) ?></p>
     <p class="lead">Current bid: £<?php echo(number_format($current_price, 2)) ?></p>
 
+    <?php
+    if ($currentuserID == $highestbidderID) {
+      echo 'You are the highest bidder on this item.';
+    }
+    ?>
+
     <!-- Bidding form -->
     <form method="POST" action="place_bid.php">
       <div class="input-group">
         <div class="input-group-prepend">
           <span class="input-group-text">£</span>
         </div>
-	    <input type="number" class="form-control" id="bid">
+	    <input type="number" class="form-control" name="bid">
       </div>
       <button type="submit" class="btn btn-primary form-control">Place bid</button>
     </form>
