@@ -45,6 +45,17 @@
   $_SESSION['sellerID'] = $seller_id;
 
 
+  //check whether current user has item on watchlist_funcs
+
+
+/*
+  if ($watchlistcheck == NULL) {
+    echo 'not on watchlist';
+  } else {
+    echo 'on watchlist';
+  }
+*/
+
 
 
   // TODO: Note: Auctions that have ended may pull a different set of data,
@@ -62,8 +73,24 @@
   // TODO: If the user has a session, use it to make a query to the database
   //       to determine if the user is already watching this item.
   //       For now, this is hardcoded.
-  $has_session = true;
-  $watching = false;
+  $watching =   "SELECT * FROM Watchlist WHERE UserID = $currentuserID
+                  AND itemID = $item_id";
+  $watchingresult = mysqli_query($connection, $watching);
+  $watchingrow = mysqli_fetch_array($watchingresult);
+  $watchlistcheck = $watchingrow['itemID'];
+
+  if ($watchlistcheck == NULL) {
+    $watching = false;
+  } else {
+    $watching = true;
+  }
+
+  if (isset($_SESSION['logged_in'])) {
+    $has_session = true;
+  } else {
+    $has_session = false;
+  }
+  //$watching = false;
 ?>
 
 
@@ -82,6 +109,7 @@
     <div id="watch_nowatch" <?php if ($has_session && $watching) echo('style="display: none"');?> >
       <button type="button" class="btn btn-outline-secondary btn-sm" onclick="addToWatchlist()">+ Add to watchlist</button>
     </div>
+    <!-- Need to print this if item already exists on watchlist -->
     <div id="watch_watching" <?php if (!$has_session || !$watching) echo('style="display: none"');?> >
       <button type="button" class="btn btn-success btn-sm" disabled>Watching</button>
       <button type="button" class="btn btn-danger btn-sm" onclick="removeFromWatchlist()">Remove watch</button>
@@ -121,7 +149,7 @@
         <div class="input-group-prepend">
           <span class="input-group-text">£</span>
         </div>
-	    <input type="number" class="form-control" name="bid">
+	    <input type="number" class="form-control" name="bid" id="bid">
       </div>
       <button type="submit" class="btn btn-primary form-control">Place bid</button>
     </form>
