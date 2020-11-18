@@ -25,9 +25,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 		}
 
 		$connection->close();
-		echo "It's all fine";
 	    $_SESSION['success'] = 'Record Added';
-	    // header( 'Location: login.php' ) ;
+	    header( 'Location: browse.php' ) ;
 
 	    return;
 	}
