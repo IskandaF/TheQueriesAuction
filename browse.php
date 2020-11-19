@@ -1,6 +1,8 @@
 <?php include_once("header.php");
 include_once("mysqli.php");
+if (session_status() == PHP_SESSION_NONE){
 session_start();
+};
 ?>
 <?php require("utilities.php")?>
 <?php
@@ -18,12 +20,12 @@ while ($row = mysqli_fetch_array($result)) {
 ?>
 
 <?php
-if ($_SESSION["success"]){
+if (isset($_SESSION["success"])){
   echo '<p style="color:green">'.$_SESSION['success']."</p>\n";
   unset($_SESSION['success']);
 }
-else {
-  echo($_SESSION['fail']);
+if (isset($_SESSION["fail"])){
+  echo '<p style="color:red">'.$_SESSION['fail']."</p>\n";
   unset($_SESSION['fail']);
 }
 ?>
@@ -142,7 +144,11 @@ $offset = 10 * ((int) $curr_page-1);
 
 
  $search = $mysqli->prepare("SELECT i.itemID, i.title, i.description, b.bidValue, i.closeDate, b.bidID FROM Items i, Bids b
- WHERE i.highestbidID = b.bidID AND i.title LIKE ? AND i.categoryID LIKE ? ORDER BY $ordering LIMIT 10 OFFSET $offset;");
+ WHERE i.highestbidID = b.bidID AND i.title LIKE ? AND i.catID LIKE ? ORDER BY $ordering LIMIT 10 OFFSET $offset;");
+ 
+ if (!isset($_GET['keyword'])){
+  $_GET['keyword']="%%";
+}
  $keyword_SQL = "%" . $_GET['keyword'] . "%";
 
  $search -> bind_Param("ss", $keyword_SQL, $category);
@@ -189,7 +195,7 @@ $offset = 10 * ((int) $curr_page-1);
   $result1 = mysqli_query($connection, $stmt1);
 
 $search_count = $mysqli->prepare("SELECT i.itemID, i.title, i.description, b.bidValue, i.closeDate, b.bidID FROM Items i, Bids b
- WHERE i.highestbidID = b.bidID AND i.title LIKE ? AND i.categoryID LIKE ? ORDER BY $ordering;");
+ WHERE i.highestbidID = b.bidID AND i.title LIKE ? AND i.catID LIKE ? ORDER BY $ordering;");
  $keyword_SQL = "%" . $_GET['keyword'] . "%";
 
  $search_count -> bind_Param("ss", $keyword_SQL, $category);
