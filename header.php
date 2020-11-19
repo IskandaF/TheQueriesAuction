@@ -99,11 +99,11 @@
         <form method="POST" action="login_result.php">
           <div class="form-group">
             <label for="email">Email</label>
-            <input type="text" class="form-control" name="email" id="email" placeholder="Email">
+            <input type="text" class="form-control" name="email" id="email" placeholder="Email" >
           </div>
           <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" class="form-control" name="password" id="password" placeholder="Password">
+            <input type="password" class="form-control" name="password" id="password" placeholder="Password" autofocus>
           </div>
           <button type="submit" name="submit" class="btn btn-primary form-control">Sign in</button>
         </form>

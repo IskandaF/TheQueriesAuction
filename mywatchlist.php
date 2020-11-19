@@ -1,7 +1,12 @@
 <?php include_once("header.php")?>
 <?php require("utilities.php")?>
 <?php include_once("mysqli.php")?>
-<?php session_start(); ?>
+<?php 
+if (session_status() == PHP_SESSION_NONE){
+session_start(); 
+};
+
+?>
 
 <div class="container">
 
