@@ -56,12 +56,16 @@ if (isset($_SESSION["fail"])){
       <div class="form-group">
         <label for="cat" class="sr-only">Search within:</label>
         <select class="form-control" id="cat" name="cat">
+
+
+
+
           <option selected value="%">All categories</option>
-          <option value="CAT1">Class A Pharmacuticals</option>
-          <option value="CAT2">CAT2 </option>
-          <option value="CAT3">CAT3</option>
-          <option value="CAT4">CAT4 </option>
-          <option value="CAT5">CAT5</option>
+          <option value="CAT1" <?php if  ((isset($_GET['cat'])) && ($_GET['cat'] == 'CAT1')) { ?>selected="true" <?php }; ?>>Class A Pharmacuticals</option>
+          <option value="CAT2" <?php if ((isset($_GET['cat'])) && ($_GET['cat'] == 'CAT2')) { ?>selected="true" <?php }; ?>>CAT2 </option>
+          <option value="CAT3" <?php if ((isset($_GET['cat'])) && ($_GET['cat'] == 'CAT3')) { ?>selected="true" <?php }; ?>>CAT3</option>
+          <option value="CAT4" <?php if ((isset($_GET['cat'])) && ($_GET['cat'] == 'CAT4')) { ?>selected="true" <?php }; ?>>CAT4 </option>
+          <option value="CAT5" <?php if ((isset($_GET['cat'])) && ($_GET['cat'] == 'CAT5')) { ?>selected="true" <?php }; ?>>CAT5</option>
         </select>
       </div>
     </div>

@@ -15,17 +15,10 @@ session_start();
 <?php
 
 //get current userID
-$currentuserID = $_SESSION['userID'];
 
-//Get items on watchlist that match with current userID and this itemID
-$watchquery = "SELECT i.itemID, i.title, i.description, b.bidValue, i.closeDate, b.bidID
-          FROM Items i, Bids b, Watchlist w
-          WHERE i.highestbidID = b.bidID
-          AND w.itemID = i.itemID AND w.userID = $currentuserID
-          ORDER BY itemID DESC";
-$watchresult = mysqli_query($connection, $watchquery)
-or die('Error making select users query' .
-mysql_error());
+
+
+
 
 //check user is logged in
 if (isset($_SESSION['logged_in'])) {
@@ -51,6 +44,21 @@ if (isset($_SESSION['logged_in'])) {
 
         // This uses a function defined in utilities.php
           print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_time);
+
+
+
+
+          $currentuserID = $_SESSION['userID'];
+
+//Get items on watchlist that match with current userID and this itemID
+$watchquery = "SELECT i.itemID, i.title, i.description, b.bidValue, i.closeDate, b.bidID
+          FROM Items i, Bids b, Watchlist w
+          WHERE i.highestbidID = b.bidID
+          AND w.itemID = i.itemID AND w.userID = $currentuserID
+          ORDER BY itemID DESC";
+$watchresult = mysqli_query($connection, $watchquery)
+or die('Error making select users query' .
+mysql_error());
       }
 
 } else {
