@@ -28,6 +28,7 @@
 
   $title = $row1['title'];
   $description = $row1['description'];
+  $_SESSION["itemdescription"]=$description;
   $current_price = $row1['bidValue'];
   $num_bids = $row2['c'];
   $end_time = new DateTime($row1['closeDate']);

@@ -1,5 +1,6 @@
 <?php
 include_once("mysqli.php");
+include_once("mail/bid_placed.php");
 session_start();
 ?>
 
@@ -73,6 +74,61 @@ if (isset($_SESSION['logged_in'])) {
                           WHERE c.itemID = i.itemID)";
           if ($connection->query($updatehighbid) === TRUE) {
             echo "Highest bid value updated.";
+
+
+
+            $email->addTo($_SESSION['username'], "Example User");
+
+			$email->addContent("text/plain", $bidValue);
+			$email->addContent("text/html", ("You just have put the highest bid of £".$bidValue." for the ".$_SESSION["itemdescription"] ));
+      sendBidPlacedEmail($email,$sendgrid);
+
+      // getting list of other bidders to update them
+
+      $getotherbidders='SELECT email
+      FROM Watchlist w
+      join users u on w.userID=u.userID
+      WHERE w.itemID='.$_SESSION['itemID'];
+      $otherbidders=$connection->query($getotherbidders);
+      while($row = mysqli_fetch_array($otherbidders)){
+        if ($row["email"]!=$_SESSION['username']){
+        $email = new \SendGrid\Mail\Mail();
+        $email->setFrom("auctionthequeries@gmail.com", "The Queries Auction");
+        $email->setSubject("The maximum bid for the item ".$_SESSION["itemdescription"]." has just been updated to ".$bidValue);
+        $email->addTo($row["email"], "Example User");
+        $email->addContent("text/plain", "The maximum bid for the item ".$_SESSION["itemdescription"]." has just been updated to ".$bidValue);
+        $email->addContent("text/html", "<strong>The maximum bid for the item ".$_SESSION["itemdescription"]." has just been updated to ".$bidValue."</strong>");
+        try {
+          sendBidPlacedEmail($email,$sendgrid);
+      } catch (Exception $e) {
+          echo 'Caught exception: '. $e->getMessage() ."\n";
+      }
+        }
+
+      }
+// end of updating other users
+// sending an email to seller
+{
+  $query='SELECT email from Users where userID='.$_SESSION['sellerID'];
+  $result=$connection->query($query);
+  $row = mysqli_fetch_array($result);
+  $email = new \SendGrid\Mail\Mail();
+  $email->setFrom("auctionthequeries@gmail.com", "The Queries Auction");
+  $email->setSubject("The maximum bid for your item ".$_SESSION["itemdescription"]." has just been updated to ".$bidValue);
+  $email->addTo($row["email"], "Example User");
+  $email->addContent("text/plain", "The maximum bid for your item ".$_SESSION["itemdescription"]." has just been updated to ".$bidValue);
+  $email->addContent("text/html", "<strong>The maximum bid for your item ".$_SESSION["itemdescription"]." has just been updated to ".$bidValue."</strong>");
+  sendBidPlacedEmail($email,$sendgrid);
+
+}
+
+
+
+
+
+      unset($_SESSION["itemdescription"]);
+      unset($_SESSION['itemID']);
+
           } else {
             //if highestBid in Items not updated
             echo "Error: " . $sql . "<br>" . $connection->error;

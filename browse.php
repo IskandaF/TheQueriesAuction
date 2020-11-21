@@ -1,11 +1,13 @@
 <?php include_once("header.php");
 include_once("mysqli.php");
+if (session_status() == PHP_SESSION_NONE){
 session_start();
+};
 ?>
 <?php require("utilities.php")?>
 <?php
 
-$query = "SELECT userID FROM Users";
+$query = "SELECT userID FROM Users LIMIT 1";
 $result = mysqli_query($connection,$query)
 or die('Error making select users query' .
 mysql_error());
@@ -18,12 +20,12 @@ while ($row = mysqli_fetch_array($result)) {
 ?>
 
 <?php
-if ($_SESSION["success"]){
+if (isset($_SESSION["success"])){
   echo '<p style="color:green">'.$_SESSION['success']."</p>\n";
   unset($_SESSION['success']);
 }
-else {
-  echo($_SESSION['fail']);
+if (isset($_SESSION["fail"])){
+  echo '<p style="color:red">'.$_SESSION['fail']."</p>\n";
   unset($_SESSION['fail']);
 }
 ?>
@@ -163,8 +165,11 @@ $offset = 10 * ((int) $curr_page-1);
  $search_got = $search->get_result();
 
  if(empty(mysqli_num_rows($search_got))){
- echo 'Sorry there are no listings that match your search, please alter your search criteria or return to: <a class="page-link" href = "browse.php">browse catalog</a>';
-}
+ echo 'Sorry, there are no listings that match your search, please alter your search criteria or return to:  <a class="page-link" href = "browse.php">browse catalog</a>';
+ }
+
+
+
 
  while ($row_search = $search_got->fetch_assoc()) { // Add a clause in this while loop that says 'AND b.bidderUserID = userID'
 
@@ -210,9 +215,11 @@ $search_count = $mysqli->prepare("SELECT i.itemID, i.title, i.description, b.bid
   echo mysqli_num_rows($search_got_count) . ' results found.';
 
 
-  $num_results = mysqli_num_rows($result1);
+  $num_results = mysqli_num_rows($search_got_count); //merge conflict
   $results_per_page = 10;
   $max_page = ceil($num_results / $results_per_page);
+
+
 ?>
 
 <div class="container mt-5">
@@ -270,7 +277,7 @@ $search_count = $mysqli->prepare("SELECT i.itemID, i.title, i.description, b.bid
   $low_page = max(1, $curr_page - 2 - $low_page_boost);
   $high_page = min($max_page, $curr_page + 2 + $high_page_boost);
 
-  if ($curr_page != 1) {
+  if ($curr_page != 1 and $num_results != 0) {
     echo('
     <li class="page-item">
       <a class="page-link" href="browse.php?' . $querystring . 'page=' . ($curr_page - 1) . '" aria-label="Previous">
@@ -278,6 +285,7 @@ $search_count = $mysqli->prepare("SELECT i.itemID, i.title, i.description, b.bid
         <span class="sr-only">Previous</span>
       </a>
     </li>');
+
   }
 
   for ($i = $low_page; $i <= $high_page; $i++) {
@@ -298,7 +306,7 @@ $search_count = $mysqli->prepare("SELECT i.itemID, i.title, i.description, b.bid
     </li>');
   }
 
-  if ($curr_page != $max_page) {
+  if ($curr_page != $max_page and $num_results != 0) {
     echo('
     <li class="page-item">
       <a class="page-link" href="browse.php?' . $querystring . 'page=' . ($curr_page + 1) . '" aria-label="Next">
