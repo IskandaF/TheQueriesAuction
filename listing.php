@@ -7,15 +7,20 @@
 <?php
   // Get info from the URL:
   $item_id = $_GET['item_id'];
-  
+  $_SESSION['itemID'] = $item_id;
 
-  $stmt1 = "SELECT i.itemID, i.title, i.description, b.bidValue, i.closeDate FROM Items i, Bids b WHERE i.highestbidID = b.bidID AND i.itemID = $item_id";
+
+  $stmt1 = "SELECT i.itemID, i.reservePrice, i.title, i.description, b.bidValue, i.closeDate, i.sellerID, b.bidID, b.bidderUserID FROM Items i, Bids b WHERE i.highestbidID = b.bidID AND i.itemID = $item_id";
   $result1 = mysqli_query($connection, $stmt1);
   $row1 = mysqli_fetch_array($result1);
 
   $stmt2 = "SELECT COUNT(bidID) as c FROM Bids WHERE itemID = $item_id";
   $result2 = mysqli_query($connection, $stmt2);
   $row2 = mysqli_fetch_array($result2);
+
+  $useridquery = "SELECT * FROM Users WHERE email = '" . $_SESSION['username'] . "' ";
+  $useridresult = mysqli_query($connection, $useridquery);
+  $useridrow = mysqli_fetch_array($useridresult);
 
   // TODO: Use item_id to make a query to the database.
 
@@ -26,6 +31,32 @@
   $current_price = $row1['bidValue'];
   $num_bids = $row2['c'];
   $end_time = new DateTime($row1['closeDate']);
+  $reserve_price = $row1['reservePrice'];
+  $seller_id = $row1['sellerID'];
+  $currentuserID = $useridrow['userID'];
+  $highestbidderID = $row1['bidderUserID'];
+
+
+
+
+
+  $_SESSION['currentPrice'] = $current_price;
+  $_SESSION['reservePrice'] = $reserve_price;
+  $_SESSION['sellerID'] = $seller_id;
+
+
+  //check whether current user has item on watchlist_funcs
+
+
+/*
+  if ($watchlistcheck == NULL) {
+    echo 'not on watchlist';
+  } else {
+    echo 'on watchlist';
+  }
+*/
+
+
 
   // TODO: Note: Auctions that have ended may pull a different set of data,
   //       like whether the auction ended in a sale or was cancelled due
@@ -42,8 +73,24 @@
   // TODO: If the user has a session, use it to make a query to the database
   //       to determine if the user is already watching this item.
   //       For now, this is hardcoded.
-  $has_session = true;
-  $watching = false;
+  $watching =   "SELECT * FROM Watchlist WHERE UserID = $currentuserID
+                  AND itemID = $item_id";
+  $watchingresult = mysqli_query($connection, $watching);
+  $watchingrow = mysqli_fetch_array($watchingresult);
+  $watchlistcheck = $watchingrow['itemID'];
+
+  if ($watchlistcheck == NULL) {
+    $watching = false;
+  } else {
+    $watching = true;
+  }
+
+  if (isset($_SESSION['logged_in'])) {
+    $has_session = true;
+  } else {
+    $has_session = false;
+  }
+  //$watching = false;
 ?>
 
 
@@ -62,6 +109,7 @@
     <div id="watch_nowatch" <?php if ($has_session && $watching) echo('style="display: none"');?> >
       <button type="button" class="btn btn-outline-secondary btn-sm" onclick="addToWatchlist()">+ Add to watchlist</button>
     </div>
+    <!-- Need to print this if item already exists on watchlist -->
     <div id="watch_watching" <?php if (!$has_session || !$watching) echo('style="display: none"');?> >
       <button type="button" class="btn btn-success btn-sm" disabled>Watching</button>
       <button type="button" class="btn btn-danger btn-sm" onclick="removeFromWatchlist()">Remove watch</button>
@@ -82,6 +130,13 @@
   <div class="col-sm-4"> <!-- Right col with bidding info -->
 
     <p>
+
+
+<?php
+    echo 'This item is sold by ' . $_SESSION['username'] . '<br>';
+    echo '<br>';
+?>
+
 <?php if ($now > $end_time): ?>
      This auction ended <?php echo(date_format($end_time, 'j M H:i')) ?>
      <!-- TODO: Print the result of the auction here? -->
@@ -89,13 +144,20 @@
      Auction ends <?php echo(date_format($end_time, 'j M H:i') . $time_remaining) ?></p>
     <p class="lead">Current bid: £<?php echo(number_format($current_price, 2)) ?></p>
 
+    <?php
+    if ($currentuserID == $highestbidderID) {
+      echo 'You are the highest bidder on this item.';
+    }
+    ?>
+
+
     <!-- Bidding form -->
     <form method="POST" action="place_bid.php">
       <div class="input-group">
         <div class="input-group-prepend">
           <span class="input-group-text">£</span>
         </div>
-	    <input type="number" class="form-control" id="bid">
+	    <input type="number" class="form-control" name="bid" id="bid">
       </div>
       <button type="submit" class="btn btn-primary form-control">Place bid</button>
     </form>

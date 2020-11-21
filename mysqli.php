@@ -1,9 +1,9 @@
 <?php
 $connection =
-mysqli_connect('localhost','root','root','AuctionDB');
+mysqli_connect('localhost','root','root','auction');
 // See the "errors" folder for details...
-if (!$connection) { 
+if (!$connection) {
 echo "Can't establish connection to the database";
-} 
+}
 
 ?>

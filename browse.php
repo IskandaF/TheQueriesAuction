@@ -39,35 +39,43 @@ else {
   <div class="row">
     <div class="col-md-5 pr-0">
       <div class="form-group">
-        <label for="keyword" class="sr-only">Search keyword:</label>
+        <label for = "keyword" class="sr-only">Search keyword:</label>
 	    <div class="input-group">
           <div class="input-group-prepend">
             <span class="input-group-text bg-transparent pr-0 text-muted">
               <i class="fa fa-search"></i>
             </span>
           </div>
-          <input type="text" class="form-control border-left-0" id="keyword" placeholder="Search for anything">
+          <input type="text" class="form-control border-left-0" id = "keyword" name = "keyword" placeholder="Search for anything">
         </div>
       </div>
     </div>
     <div class="col-md-3 pr-0">
       <div class="form-group">
         <label for="cat" class="sr-only">Search within:</label>
-        <select class="form-control" id="cat">
-          <option selected value="all">All categories</option>
-          <option value="fill">Fill me in</option>
-          <option value="with">with options</option>
-          <option value="populated">populated from a database?</option>
+        <select class="form-control" id="cat" name="cat">
+          <option selected value="%">All categories</option>
+          <option value="CAT1">Class A Pharmaceuticals</option>
+          <option value="CAT2">Class B Pharmaceuticals </option>
+          <option value="CAT3">Class C Pharmaceuticals</option>
+          <option value="CAT4">Class D Pharmaceuticals </option>
+          <option value="CAT5">Class E Pharmaceuticals</option>
+          <option value="CAT6">Electronics</option>
+          <option value="CAT7">Equipment</option>
+          <option value="CAT8">Other</option>
         </select>
       </div>
     </div>
     <div class="col-md-3 pr-0">
       <div class="form-inline">
         <label class="mx-2" for="order_by">Sort by:</label>
-        <select class="form-control" id="order_by">
-          <option selected value="pricelow">Price (low to high)</option>
+        <select class="form-control" id="order_by" name="order_by">
+          <option selected value="alphabetical">Products A-Z</option>
+          <option value="pricelow">Price (low to high)</option>
           <option value="pricehigh">Price (high to low)</option>
           <option value="date">Soonest expiry</option>
+          <option value="recent">Recently added</option>
+
         </select>
       </div>
     </div>
@@ -85,23 +93,44 @@ else {
   // Retrieve these from the URL
   if (!isset($_GET['keyword'])) {
     // TODO: Define behavior if a keyword has not been specified.
+    $keyword = "";
   }
   else {
     $keyword = $_GET['keyword'];
+    $keyword = strtolower($keyword);
   }
 
   if (!isset($_GET['cat'])) {
-    // TODO: Define behavior if a category has not been specified.
+    $category = "%%";
+
   }
   else {
     $category = $_GET['cat'];
+
   }
 
   if (!isset($_GET['order_by'])) {
     // TODO: Define behavior if an order_by value has not been specified.
+    $ordering = "i.title ASC";
+
   }
   else {
-    $ordering = $_GET['order_by'];
+   if($_GET['order_by'] == "alphabetical"){
+ $ordering = "i.title ASC";
+ }
+   if($_GET['order_by'] == "pricelow"){
+ $ordering = "b.bidvalue ASC";
+ }
+ if($_GET['order_by'] == "pricehigh"){
+ $ordering = "b.bidvalue DESC";
+}
+ if($_GET['order_by'] == "date"){
+ $ordering = "i.closeDate ASC";
+ }
+ if($_GET['order_by'] == "recent"){
+   $ordering = "i.itemID DESC";
+ }
+;
   }
 
   if (!isset($_GET['page'])) {
@@ -110,14 +139,78 @@ else {
   else {
     $curr_page = $_GET['page'];
   }
+$offset = 10 * ((int) $curr_page-1);
+
+//echo $keyword . '<br>';
+//echo $category. '<br>';
+//echo $ordering. '<br>';
 
   /* TODO: Use above values to construct a query. Use this query to
      retrieve data from the database. (If there is no form data entered,
      decide on appropriate default value/default query to make. */
+ $mysqli = new mysqli("localhost","root","root","auction");
+
+
+
+ $search = $mysqli->prepare("SELECT i.itemID, i.title, i.description, b.bidValue, i.closeDate, b.bidID FROM Items i, Bids b
+ WHERE i.highestbidID = b.bidID AND i.title LIKE ? AND i.catID LIKE ? ORDER BY $ordering LIMIT 10 OFFSET $offset;");
+ $keyword_SQL = "%" . $_GET['keyword'] . "%";
+
+ $search -> bind_Param("ss", $keyword_SQL, $category);
+
+ $search -> execute();
+
+ $search_got = $search->get_result();
+
+ if(empty(mysqli_num_rows($search_got))){
+ echo 'Sorry there are no listings that match your search, please alter your search criteria or return to: <a class="page-link" href = "browse.php">browse catalog</a>';
+}
+
+ while ($row_search = $search_got->fetch_assoc()) { // Add a clause in this while loop that says 'AND b.bidderUserID = userID'
+
+     $item_id_search = $row_search['itemID'];
+
+
+    $stmt2_search = "SELECT COUNT(bidID) as c FROM Bids WHERE itemID = $item_id_search";
+    $result2_search = mysqli_query($connection, $stmt2_search);
+    $row2_search = mysqli_fetch_array($result2_search);
+
+     $title = $row_search['title'];
+     $description = $row_search['description'];
+     $current_price = $row_search['bidValue'];
+     $num_bids = $row2_search['c'];
+     $end_time = new DateTime($row_search['closeDate']);
+
+    // This uses a function defined in utilities.php
+    print_listing_li($item_id_search, $title, $description, $current_price, $num_bids, $end_time);
+
+
+  }
+
+
+
 
   /* For the purposes of pagination, it would also be helpful to know the
      total number of results that satisfy the above query */
-  $num_results = 96; // TODO: Calculate me for real
+
+  //Elina - copy this query to use in mylistings.php
+  $stmt1 = "SELECT i.itemID, i.title, i.description, b.bidValue, i.closeDate, b.bidID FROM Items i, Bids b WHERE i.highestbidID = b.bidID ORDER BY itemID DESC";
+  $result1 = mysqli_query($connection, $stmt1);
+
+$search_count = $mysqli->prepare("SELECT i.itemID, i.title, i.description, b.bidValue, i.closeDate, b.bidID FROM Items i, Bids b
+ WHERE i.highestbidID = b.bidID AND i.title LIKE ? AND i.catID LIKE ? ORDER BY $ordering;");
+ $keyword_SQL = "%" . $_GET['keyword'] . "%";
+
+ $search_count -> bind_Param("ss", $keyword_SQL, $category);
+
+ $search_count -> execute();
+
+ $search_got_count = $search_count->get_result();
+
+  echo mysqli_num_rows($search_got_count) . ' results found.';
+
+
+  $num_results = mysqli_num_rows($result1);
   $results_per_page = 10;
   $max_page = ceil($num_results / $results_per_page);
 ?>
@@ -133,42 +226,27 @@ else {
 
 <?php
 
-  $stmt1 = "SELECT i.itemID, i.title, i.description, b.bidValue, i.closeDate FROM Items i, Bids b WHERE i.highestbidID = b.bidID ORDER BY itemID DESC";
-  $result1 = mysqli_query($connection, $stmt1);
 
 
-  while ($row1 = $result1->fetch_assoc()) {
-    $item_id = $row1['itemID'];
+// Elina - copy this code to use in mylistings.php
 
-    $stmt2 = "SELECT COUNT(bidID) as c FROM Bids WHERE itemID = $item_id";
-    $result2 = mysqli_query($connection, $stmt2);
-    $row2 = mysqli_fetch_array($result2);
 
-    $title = $row1['title'];
-    $description = $row1['description'];
-    $current_price = $row1['bidValue'];
-    $num_bids = $row2['c'];
-    $end_time = new DateTime($row1['closeDate']);
-
-    // This uses a function defined in utilities.php
-    print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_time);
-  };
-
+// end of browse code for mylistings.php
 
 ?>
 
 <?php
   // Demonstration of what listings will look like using dummy data.
 
-
+  /*
   $item_id = "516";
   $title = "Different title";
   $description = "Very short description.";
   $current_price = 13.50;
   $num_bids = 3;
   $end_date = new DateTime('2020-11-02T00:00:00');
-
   print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
+  */
 ?>
 
 </ul>

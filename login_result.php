@@ -1,8 +1,6 @@
-<!-- 
-
+<!--
 // TODO: Extract $_POST variables, check they're OK, and attempt to login.
 // Notify user of success/failure and redirect/give navigation options.
-
 // For now, I will just set session variables and redirect. -->
 
 
@@ -12,8 +10,8 @@ require_once ("mysqli.php");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
 		if ((isset($_POST["email"],$_POST["password"])) && ((strlen($_POST["email"])>0)&&(strlen($_POST["password"])>0)))  {
-    
-          $query = "SELECT email,password FROM Users 
+
+          $query = "SELECT email,password FROM Users
         WHERE password = ? AND email=?";
 
 
@@ -35,17 +33,18 @@ if(password_verify($password, $row["password"])){
 	$_SESSION["success"]="You're logged in now";
     $_SESSION['logged_in'] = true;
 	$_SESSION['username'] = $_POST["email"];
+	$_SESSION['userID'] = $row["userID"];
 	$_SESSION['account_type'] = "buyer";
 	return;
 }
 
  //    $stmt->execute(array(
-        
+
  //        ':pw' => $_POST['password']));
  //    $row = $stmt->fetch(PDO::FETCH_ASSOC);
  //    var_dump($row);
  //    if ( $row === FALSE ) {
-       
+
  //       $_SESSION["error"]="Incorrect password";
  //       error_log("Session ID= ".session_id()."  Error= ".$_SESSION["error"]);
  //       header("location:index.php");
@@ -65,7 +64,7 @@ else{
     header("location:browse.php");
     	   $_SESSION["fail"]="Wrong email or password";
 
- 
+
     }
 }}
 

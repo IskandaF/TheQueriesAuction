@@ -1,7 +1,7 @@
 <?php
   // FIXME: At the moment, I've allowed these values to be set manually.
   // But eventually, with a database, these should be set automatically
-  // ONLY after the user's login credentials have been verified via a 
+  // ONLY after the user's login credentials have been verified via a
   // database query.
   session_start([
     'cookie_lifetime' => 86400,
@@ -18,7 +18,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  
+
   <!-- Bootstrap and FontAwesome CSS -->
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -34,10 +34,10 @@
 
 <!-- Navbars -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light mx-2">
-  <a class="navbar-brand" href="#">Site Name <!--CHANGEME!--></a>
+  <a class="navbar-brand" href="#">Pharmaceuticals by The Queries <!--CHANGEME!--></a>
   <ul class="navbar-nav ml-auto">
     <li class="nav-item">
-    
+
 <?php
   // Displays either login or logout on the right, depending on user's
   // current status (session).
@@ -72,6 +72,9 @@
   echo('
 	<li class="nav-item mx-1">
       <a class="nav-link" href="mylistings.php">My Listings</a>
+    </li>
+  <li class="nav-item mx-1">
+      <a class="nav-link" href="mywatchlist.php">My Watchlist</a>
     </li>
 	<li class="nav-item ml-3">
       <a class="nav-link btn border-light" href="create_auction.php">+ Create auction</a>
