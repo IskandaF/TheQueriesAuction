@@ -22,6 +22,11 @@
   $useridresult = mysqli_query($connection, $useridquery);
   $useridrow = mysqli_fetch_array($useridresult);
 
+  $selleridquery = "SELECT u.email FROM Items i, Users u WHERE i.itemID = $item_id AND i.sellerID = u.userID";
+  $selleridresult = mysqli_query($connection, $selleridquery);
+  $selleridrow = mysqli_fetch_array($selleridresult);
+
+
   // TODO: Use item_id to make a query to the database.
 
   // DELETEME: For now, using placeholder data.
@@ -131,6 +136,15 @@
   <div class="col-sm-4"> <!-- Right col with bidding info -->
 
     <p>
+
+
+<?php
+
+
+    echo 'This item is sold by ' . $selleridrow['email'] . '<br>';
+    echo '<br>';
+?>
+
 <?php if ($now > $end_time): ?>
      This auction ended <?php echo(date_format($end_time, 'j M H:i')) ?>
      <!-- TODO: Print the result of the auction here? -->
@@ -143,6 +157,7 @@
       echo 'You are the highest bidder on this item.';
     }
     ?>
+
 
     <!-- Bidding form -->
     <form method="POST" action="place_bid.php">
