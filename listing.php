@@ -22,6 +22,11 @@
   $useridresult = mysqli_query($connection, $useridquery);
   $useridrow = mysqli_fetch_array($useridresult);
 
+  $selleridquery = "SELECT u.email FROM Items i, Users u WHERE i.itemID = $item_id AND i.sellerID = u.userID";
+  $selleridresult = mysqli_query($connection, $selleridquery);
+  $selleridrow = mysqli_fetch_array($selleridresult);
+
+
   // TODO: Use item_id to make a query to the database.
 
   // DELETEME: For now, using placeholder data.
@@ -134,7 +139,9 @@
 
 
 <?php
-    echo 'This item is sold by ' . $_SESSION['username'] . '<br>';
+
+
+    echo 'This item is sold by ' . $selleridrow['email'] . '<br>';
     echo '<br>';
 ?>
 

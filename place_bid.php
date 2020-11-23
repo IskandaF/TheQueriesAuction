@@ -50,7 +50,7 @@ if (isset($_SESSION['logged_in'])) {
 
 
     //Check bid is higher than previous highest bid and reserve price
-    if (($bidValue > $_SESSION['currentPrice']) and ($bidValue > $_SESSION['reservePrice'])) { //In hindsight, reservePrice shouldn't stop you from placing a lower bid. It should just cancel the final sale if the final bid is lower
+    if ($bidValue > $_SESSION['currentPrice'])  { //In hindsight, reservePrice shouldn't stop you from placing a lower bid. It should just cancel the final sale if the final bid is lower
       $stmt4 = "INSERT INTO Bids (bidderUserID, bidValue, bidDate, itemID)
                 VALUES ('".$userID."', '".$bidValue."', '".$bidDate."', '".$itemID."')";
 
@@ -124,10 +124,11 @@ if (isset($_SESSION['logged_in'])) {
 
 
 
-
+header("refresh:2;url=listing.php" . "?item_id=" . $itemID);
 
       unset($_SESSION["itemdescription"]);
       unset($_SESSION['itemID']);
+
 
           } else {
             //if highestBid in Items not updated
@@ -141,7 +142,7 @@ if (isset($_SESSION['logged_in'])) {
           echo "Error: " . $sql . "<br>" . $connection->error;
         }
       } else {
-        //if bid lower than previous highest bid or reserve price
+        //if bid lower than previous highest bid
         echo 'Bid too low. Please bid higher than £' . $_SESSION['currentPrice'];
         header("refresh:2;url=listing.php" . "?item_id=" . $itemID);
       }
