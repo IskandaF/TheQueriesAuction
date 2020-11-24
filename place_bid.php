@@ -151,13 +151,13 @@ header("refresh:2;url=listing.php" . "?item_id=" . $itemID);
       header("refresh:2;url=listing.php" . "?item_id=" . $itemID);
     }
 
-/*
+
   } else {
     //if user not logged in
     echo 'Please log in.';
     header("refresh:2;url=browse.php");
   }
-*/
+
 
   mysqli_close($connection);
   header("refresh:2;url=listing.php" . "?item_id=" . $itemID);
