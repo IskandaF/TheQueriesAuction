@@ -50,7 +50,7 @@ if (isset($_SESSION['logged_in'])) {
 
 
     //Check bid is higher than previous highest bid and reserve price
-    if (($bidValue > $_SESSION['currentPrice']) and ($bidValue > $_SESSION['reservePrice'])) { //potential bug if no bids have been placed yet? i.e. currentPrice doesn't exist?
+    if ($bidValue > $_SESSION['currentPrice'])  { //In hindsight, reservePrice shouldn't stop you from placing a lower bid. It should just cancel the final sale if the final bid is lower
       $stmt4 = "INSERT INTO Bids (bidderUserID, bidValue, bidDate, itemID)
                 VALUES ('".$userID."', '".$bidValue."', '".$bidDate."', '".$itemID."')";
 
@@ -85,14 +85,14 @@ if (isset($_SESSION['logged_in'])) {
 
       // getting list of other bidders to update them
 
-      $getotherbidders='SELECT email 
+      $getotherbidders='SELECT email
       FROM Watchlist w
-      join users u on w.userID=u.userID 
+      join users u on w.userID=u.userID
       WHERE w.itemID='.$_SESSION['itemID'];
       $otherbidders=$connection->query($getotherbidders);
       while($row = mysqli_fetch_array($otherbidders)){
         if ($row["email"]!=$_SESSION['username']){
-        $email = new \SendGrid\Mail\Mail(); 
+        $email = new \SendGrid\Mail\Mail();
         $email->setFrom("auctionthequeries@gmail.com", "The Queries Auction");
         $email->setSubject("The maximum bid for the item ".$_SESSION["itemdescription"]." has just been updated to ".$bidValue);
         $email->addTo($row["email"], "Example User");
@@ -104,7 +104,7 @@ if (isset($_SESSION['logged_in'])) {
           echo 'Caught exception: '. $e->getMessage() ."\n";
       }
         }
-        
+
       }
 // end of updating other users
 // sending an email to seller
@@ -112,7 +112,7 @@ if (isset($_SESSION['logged_in'])) {
   $query='SELECT email from Users where userID='.$_SESSION['sellerID'];
   $result=$connection->query($query);
   $row = mysqli_fetch_array($result);
-  $email = new \SendGrid\Mail\Mail(); 
+  $email = new \SendGrid\Mail\Mail();
   $email->setFrom("auctionthequeries@gmail.com", "The Queries Auction");
   $email->setSubject("The maximum bid for your item ".$_SESSION["itemdescription"]." has just been updated to ".$bidValue);
   $email->addTo($row["email"], "Example User");
@@ -121,13 +121,14 @@ if (isset($_SESSION['logged_in'])) {
   sendBidPlacedEmail($email,$sendgrid);
 
 }
-      
 
 
 
+header("refresh:2;url=listing.php" . "?item_id=" . $itemID);
 
       unset($_SESSION["itemdescription"]);
       unset($_SESSION['itemID']);
+
 
           } else {
             //if highestBid in Items not updated
@@ -141,7 +142,7 @@ if (isset($_SESSION['logged_in'])) {
           echo "Error: " . $sql . "<br>" . $connection->error;
         }
       } else {
-        //if bid lower than previous highest bid or reserve price
+        //if bid lower than previous highest bid
         echo 'Bid too low. Please bid higher than £' . $_SESSION['currentPrice'];
         header("refresh:2;url=listing.php" . "?item_id=" . $itemID);
       }
@@ -150,11 +151,13 @@ if (isset($_SESSION['logged_in'])) {
       header("refresh:2;url=listing.php" . "?item_id=" . $itemID);
     }
 
+
   } else {
     //if user not logged in
     echo 'Please log in.';
     header("refresh:2;url=browse.php");
   }
+
 
   mysqli_close($connection);
   header("refresh:2;url=listing.php" . "?item_id=" . $itemID);

@@ -1,0 +1,4 @@
+(num rows in query) successfully moved to sales table on (currentDate)
+
+test write
+test write

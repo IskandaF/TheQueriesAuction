@@ -1,0 +1,30 @@
+
+Added1to Sales table on 2020-11-21
+Added 1 items to Sales table on 2020-11-21
+Added 1 items to Sales table on 2020-11-21
+Added 1 items to Sales table on 2020-11-21
+Added 1 items to Sales table on 2020-11-21
+Added 1 items to Sales table on 2020-11-21
+Added 1 items to Sales table on 2020-11-21
+Added 1 items to Sales table on 2020-11-21
+Added 2 items to Sales table on 2020-11-21
+Added 1 items to Sales table on 2020-11-21
+Added 3 items to Sales table on 2020-11-21
+Added 1 items to Sales table on 2020-11-21
+Error: <br>You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'FROM Items i, Bids b
+                WHERE closeDate <= CURDATE() AND i.highestb' at line 3 on 2020-11-21
+Added 1 items to Sales table on 2020-11-21
+Added 1 items to Sales table on 2020-11-21
+Added 1 items to Sales table on 2020-11-21
+Added 0 items to Sales table on 2020-11-21
+Added 2 items to Sales table on 2020-11-21
+Added 1 items to Sales table on 2020-11-21
+Added 0 items to Sales table on 2020-11-21
+Added 0 items to Sales table on 2020-11-21
+Added 1 items to Sales table on 2020-11-21
+Added 1 items to Sales table on 2020-11-21
+Added  items to Sales table on 2020-11-21
+Added 0 items to Sales table on 2020-11-21
+Added 1 items to Sales table on 2020-11-23
+Added 2 items to Sales table on 2020-11-24
+Added 1 items to Sales table on 2020-11-24

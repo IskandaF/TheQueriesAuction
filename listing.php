@@ -167,7 +167,10 @@
         </div>
 	    <input type="number" class="form-control" name="bid" id="bid">
       </div>
-      <button type="submit" class="btn btn-primary form-control">Place bid</button>
+      <?php if (isset($_SESSION['logged_in'])){
+      echo'<button type="submit" class="btn btn-primary form-control">Place bid</button>';
+        } else{echo'<button type="button" class="btn btn-primary form-control" data-toggle="modal" data-target="#loginModal">Place bid</button>';
+        } ?>
     </form>
 <?php endif ?>
 
