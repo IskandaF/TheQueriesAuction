@@ -1,5 +1,7 @@
 <?php include_once("header.php")?>
 <?php include_once("mysqli.php")?>
+<?php session_start(); ?>
+
 
 <?php
 /* (Uncomment this block to redirect people without selling privileges away from this page)

@@ -34,7 +34,7 @@ if(password_verify($password, $row["password"])){
     $_SESSION['logged_in'] = true;
 	$_SESSION['username'] = $_POST["email"];
 	$_SESSION['userID'] = $row["userID"];
-	$_SESSION['account_type'] = "buyer";
+	//$_SESSION['account_type'] = "buyer";
 	return;
 }
 

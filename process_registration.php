@@ -27,17 +27,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 	    // $password=$_POST['password'];
 	    $stmt="INSERT INTO Users (email, password) VALUES ('".$email."', '".$password."')";
 	    if ($connection->query($stmt) === TRUE) {
-		  echo "New record created successfully. ";
-
+				echo "New record created successfully. <br>";
+          header("refresh:2;url=browse.php");
 		} else {
 		  echo "Error: " . $stmt . "<br>" . $connection->error;
 		}
-	/*}*/
-
 		$connection->close();
+		echo "It's all fine.";
 	    $_SESSION['success'] = 'Record Added';
-	    header( 'Location: browse.php' ) ;
-
+	    // header( 'Location: login.php' ) ;
 	    return;
 	}
 	else{

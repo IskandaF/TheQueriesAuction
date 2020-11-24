@@ -1,5 +1,7 @@
 <?php include_once("header.php")?>
 <?php require("utilities.php")?>
+<?php include_once("mysqli.php")?>
+<?php session_start(); ?>
 
 <div class="container">
 
@@ -19,6 +21,28 @@
 
   // TODO: Loop through results and print them out as list items.
 
-?>
+
+  $currentuserID = $_SESSION['userID'];
+  //echo gettype($currentuserID);
+
+  $sql = " SELECT * FROM Bids INNER JOIN Items ON Bids.itemID = Items.itemID WHERE bidderUserID = $currentuserID ";
+  //echo $currentuserID ;
+
+  $result = mysqli_query($connection, $sql);
+
+  if(mysqli_num_rows($result) == 0)
+  {
+  	echo('You do not have any biddings yet.');
+  }
+
+  else {
+
+   	  while ($row = mysqli_fetch_array($result)){
+		  print_listingg_li($row['itemID'], $row['title'], $row['description'], $row['bidValue'], new DateTime($row['closeDate']));
+	}
+}
+	?>
+
+
 
 <?php include_once("footer.php")?>

@@ -1,10 +1,13 @@
 <?php include_once("header.php");
 include_once("mysqli.php");
 if (session_status() == PHP_SESSION_NONE){
-session_start();
+  session_start();
 };
+
 ?>
+
 <?php require("utilities.php")?>
+
 <?php
 
 $query = "SELECT userID FROM Users LIMIT 1";
@@ -57,14 +60,14 @@ if (isset($_SESSION["fail"])){
         <label for="cat" class="sr-only">Search within:</label>
         <select class="form-control" id="cat" name="cat">
           <option selected value="%">All categories</option>
-          <option value="CAT1">Class A Pharmaceuticals</option>
-          <option value="CAT2">Class B Pharmaceuticals </option>
-          <option value="CAT3">Class C Pharmaceuticals</option>
-          <option value="CAT4">Class D Pharmaceuticals </option>
-          <option value="CAT5">Class E Pharmaceuticals</option>
-          <option value="CAT6">Electronics</option>
-          <option value="CAT7">Equipment</option>
-          <option value="CAT8">Other</option>
+          <option value="CAT1" <?php if ((isset($_GET['cat'])) && ($_GET['cat'] == 'CAT1')) { ?>selected="true" <?php }; ?>>Class A Pharmaceuticals</option>
+          <option value="CAT2" <?php if ((isset($_GET['cat'])) && ($_GET['cat'] == 'CAT2')) { ?>selected="true" <?php }; ?>>Class B Pharmaceuticals</option>
+          <option value="CAT3" <?php if ((isset($_GET['cat'])) && ($_GET['cat'] == 'CAT3')) { ?>selected="true" <?php }; ?>>Class C Pharmaceuticals</option>
+          <option value="CAT4" <?php if ((isset($_GET['cat'])) && ($_GET['cat'] == 'CAT4')) { ?>selected="true" <?php }; ?>>Class D Pharmaceuticals</option>
+          <option value="CAT5" <?php if ((isset($_GET['cat'])) && ($_GET['cat'] == 'CAT5')) { ?>selected="true" <?php }; ?>>Class E Pharmaceuticals</option>
+          <option value="CAT6" <?php if ((isset($_GET['cat'])) && ($_GET['cat'] == 'CAT6')) { ?>selected="true" <?php }; ?>>Electronics</option>
+          <option value="CAT7" <?php if ((isset($_GET['cat'])) && ($_GET['cat'] == 'CAT7')) { ?>selected="true" <?php }; ?>>Equipment</option>
+          <option value="CAT8" <?php if ((isset($_GET['cat'])) && ($_GET['cat'] == 'CAT8')) { ?>selected="true" <?php }; ?>>Other</option>
         </select>
       </div>
     </div>
@@ -73,10 +76,10 @@ if (isset($_SESSION["fail"])){
         <label class="mx-2" for="order_by">Sort by:</label>
         <select class="form-control" id="order_by" name="order_by">
           <option selected value="alphabetical">Products A-Z</option>
-          <option value="pricelow">Price (low to high)</option>
-          <option value="pricehigh">Price (high to low)</option>
-          <option value="date">Soonest expiry</option>
-          <option value="recent">Recently added</option>
+          <option value="pricelow" <?php if ((isset($_GET['order_by'])) && ($_GET['order_by']  == 'pricelow')) { ?>selected="true" <?php }; ?>>Price (low to high)</option>
+          <option value="pricehigh" <?php if ((isset($_GET['order_by'])) && ($_GET['order_by'] == 'pricehigh')) { ?>selected="true" <?php }; ?>>Price (high to low)</option>
+          <option value="date" <?php if ((isset($_GET['order_by'])) && ($_GET['order_by'] == 'date')) { ?>selected="true" <?php }; ?>>Soonest expiry</option>
+          <option value="recent" <?php if ((isset($_GET['order_by'])) && ($_GET['order_by'] == 'recent')) { ?>selected="true" <?php }; ?>>Recently listed</option>
 
         </select>
       </div>
@@ -85,7 +88,18 @@ if (isset($_SESSION["fail"])){
       <button type="submit" class="btn btn-primary">Search</button>
     </div>
   </div>
-</form>
+
+<div class="">
+      <div class="form-inline">
+        <label class="mx-2" for="results_pp">Results per Page</label>
+        <select class="form-control" id="results_pp" name="results_pp">
+          <option selected value="10">10</option>
+          <option value="30" <?php if ((isset($_GET['results_pp'])) && ($_GET['results_pp'] == '30')) { ?>selected="true" <?php }; ?>>30</option>
+          <option value="100" <?php if ((isset($_GET['results_pp'])) && ($_GET['results_pp'] == '100')) { ?>selected="true" <?php }; ?>>100</option>
+        </select>
+      </div>
+    </div>
+      </form>
 </div> <!-- end search specs bar -->
 
 
@@ -141,7 +155,14 @@ if (isset($_SESSION["fail"])){
   else {
     $curr_page = $_GET['page'];
   }
-$offset = 10 * ((int) $curr_page-1);
+
+  if (!isset($_GET['results_pp'])) {
+      $limit = "10";
+    }
+    else {
+      $limit = (int)$_GET['results_pp'];
+    }
+  $offset = $limit * ((int) $curr_page-1);
 
 //echo $keyword . '<br>';
 //echo $category. '<br>';
@@ -150,12 +171,25 @@ $offset = 10 * ((int) $curr_page-1);
   /* TODO: Use above values to construct a query. Use this query to
      retrieve data from the database. (If there is no form data entered,
      decide on appropriate default value/default query to make. */
- $mysqli = new mysqli("localhost","root","root","auction");
+ $mysqli = new mysqli("localhost","root","root","AuctionDB");
+
+ $search_count = $mysqli->prepare("SELECT i.itemID, i.title, i.description, b.bidValue, i.closeDate, b.bidID FROM Items i, Bids b
+ WHERE i.highestbidID = b.bidID AND i.title LIKE ? AND i.catID LIKE ?;");
+ $keyword_SQL = "%" . $_GET['keyword'] . "%";
+ $search_count -> bind_Param("ss", $keyword_SQL, $category);
+ $search_count -> execute();
+ $search_got_count = $search_count->get_result();
+ echo mysqli_num_rows($search_got_count) . ' results found.';
 
 
 
  $search = $mysqli->prepare("SELECT i.itemID, i.title, i.description, b.bidValue, i.closeDate, b.bidID FROM Items i, Bids b
- WHERE i.highestbidID = b.bidID AND i.title LIKE ? AND i.catID LIKE ? ORDER BY $ordering LIMIT 10 OFFSET $offset;");
+ WHERE i.highestbidID = b.bidID AND i.title LIKE ? AND i.catID LIKE ? ORDER BY $ordering LIMIT $limit OFFSET $offset;");
+
+ if (!isset($_GET['keyword'])){
+   $_GET['keyword']="%%";
+ }
+
  $keyword_SQL = "%" . $_GET['keyword'] . "%";
 
  $search -> bind_Param("ss", $keyword_SQL, $category);
@@ -165,7 +199,7 @@ $offset = 10 * ((int) $curr_page-1);
  $search_got = $search->get_result();
 
  if(empty(mysqli_num_rows($search_got))){
- echo 'Sorry, there are no listings that match your search, please alter your search criteria or return to:  <a class="page-link" href = "browse.php">browse catalog</a>';
+ echo 'Sorry, there are no listings that match your search, please alter your search criteria or return to:  <a class="page-link" href = "browse.php">Browse Catalog</a>';
  }
 
 
@@ -202,22 +236,10 @@ $offset = 10 * ((int) $curr_page-1);
   $stmt1 = "SELECT i.itemID, i.title, i.description, b.bidValue, i.closeDate, b.bidID FROM Items i, Bids b WHERE i.highestbidID = b.bidID ORDER BY itemID DESC";
   $result1 = mysqli_query($connection, $stmt1);
 
-$search_count = $mysqli->prepare("SELECT i.itemID, i.title, i.description, b.bidValue, i.closeDate, b.bidID FROM Items i, Bids b
- WHERE i.highestbidID = b.bidID AND i.title LIKE ? AND i.catID LIKE ? ORDER BY $ordering;");
- $keyword_SQL = "%" . $_GET['keyword'] . "%";
 
- $search_count -> bind_Param("ss", $keyword_SQL, $category);
-
- $search_count -> execute();
-
- $search_got_count = $search_count->get_result();
-
-  echo mysqli_num_rows($search_got_count) . ' results found.';
-
-
-  $num_results = mysqli_num_rows($search_got_count); //merge conflict
+  $num_results = mysqli_num_rows($search_got_count);
   $results_per_page = 10;
-  $max_page = ceil($num_results / $results_per_page);
+  $max_page = ceil($num_results / $limit);
 
 
 ?>
