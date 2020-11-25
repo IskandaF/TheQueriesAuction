@@ -125,9 +125,13 @@ while ($row1 = $catresult->fetch_assoc()) {
 </div>
 
 </div>
-<?php else : ?>
+<?php else : 
+  echo "<div class='container'>";
+  echo '<button style="color:white;background:green;margin-top:60px;margin-left:60px;" type="button" class="btn nav-link" data-toggle="modal" data-target="#loginModal">Please Login</button>';
+  echo "</div>"
 
-<a href="#">Log in</a>
+  ?>
+
 <?php endif; ?>
 
 <?php include_once("footer.php")?>

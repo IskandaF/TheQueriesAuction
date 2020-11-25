@@ -58,7 +58,7 @@ mysql_error());
 
 }
 else{
-  echo("Login button");
+  echo '<button style="color:white;background:green;margin-top:60px;margin-left:60px;" type="button" class="btn nav-link" data-toggle="modal" data-target="#loginModal">Please Login</button>';
 };
 ?>
 

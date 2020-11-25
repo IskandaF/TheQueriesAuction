@@ -7,10 +7,12 @@
                 */
 
 //Get the number of auctions ended
-$numsalesquery = "SELECT i.itemID, i.closeDate, i.highestbidID, i.reservePrice, i.sellerID, b.bidID, b.bidValue, b.bidderUserID
-                  FROM Items i, Bids b
+$numsalesquery = "SELECT i.itemID, i.closeDate, i.highestbidID, i.reservePrice,u.email,i.sellerID, b.bidID, b.bidValue, b.bidderUserID
+                  FROM Items i, Bids b,Users u
                   WHERE i.closeDate <= CURDATE()
-                  AND i.highestbidID = b.bidID";
+                  AND i.highestbidID = b.bidID
+                  AND i.sellerID=u.userID
+                  ";
 $numsalesresult = mysqli_query($connection, $numsalesquery);
 $numsales = mysqli_num_rows($numsalesresult);
 $numsalesrow = mysqli_fetch_array($numsalesresult);
@@ -23,9 +25,39 @@ while ($row = mysqli_fetch_array($numsalesresult)) {
   if ($numsalesrow['bidValue'] >= $numsalesrow['reservePrice']) {
     echo 'Item no. ' . $numsalesrow['itemID'] . ' was successfully sold by seller ' . $numsalesrow['sellerID'] . ' to ' .
     $numsalesrow['bidderUserID'] . ' for £' . $numsalesrow['bidValue'] . '<br>';
+
+
+
+    // Sending an email to the seller
+
+    $email = new PHPMailer(true);
+          $email->Subject = "Selling notification";
+
+          $email->Body    = 'Your item no. ' . $numsalesrow['itemID'] . ' was successfully to ' .
+          $numsalesrow['bidderUserID'] . ' for £' . $numsalesrow['bidValue'] . '<br>';
+
+          $email->AltBody = 'Your item no. ' . $numsalesrow['itemID'] . ' was successfully to ' .
+          $numsalesrow['bidderUserID'] . ' for £' . $numsalesrow['bidValue'];
+        $email->addAddress($numsalesrow["email"]);
+          sendEmail($email);
+    // End of sending an email to the seller
+
   } else {
     echo 'Item no. ' . $numsalesrow['itemID'] . ' was not sold by seller ' . $numsalesrow['sellerID'] . '. Highest bid was £' .
     $numsalesrow['bidValue'] . ' but the reserve price was £' . $numsalesrow['reservePrice'] . '<br>';
+
+    $email = new PHPMailer(true);
+          $email->Subject = "Selling notification";
+
+          $email->Body    = 'Your item no. ' . $numsalesrow['itemID'] . ' was not sold. Highest bid was £' .
+          $numsalesrow['bidValue'] . ' but the reserve price was £' . $numsalesrow['reservePrice']. '<br>';
+
+          $email->AltBody = 'Your item no. ' . $numsalesrow['itemID'] . ' was not sold. Highest bid was £' .
+          $numsalesrow['bidValue'] . ' but the reserve price was £' . $numsalesrow['reservePrice']. '<br>'.
+
+          $numsalesrow['bidderUserID'] . ' for £' . $numsalesrow['bidValue'];
+        $email->addAddress($numsalesrow["email"]);
+          sendEmail($email);
   }
 
     //echo 'itemID: ' . $numsalesrow['itemID'] . '<br>';
@@ -77,7 +109,20 @@ if ($connection->query($salesQuery) === TRUE) {
       fclose($myfile);
 
 
+      
+
+
+
+
+
+
+
       ///Iskander, add email notification function for successful sale here
+
+      // Email reporting to the user
+      
+      // Email reporting to the user
+
       header('Location: '.$_SERVER['PHP_SELF']);
       //If unsuccessful, write a note in the saleslogs.txt file with the error message
     } else {

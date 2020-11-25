@@ -3,8 +3,8 @@
 <?php include_once("mysqli.php")?>
 
 
-
 <?php
+
   // Get info from the URL:
   $item_id = $_GET['item_id'];
   $_SESSION['itemID'] = $item_id;
@@ -37,6 +37,7 @@
   $title = $row1['title'];
   $description = $row1['description'];
   $_SESSION["itemdescription"]=$description;
+  $_SESSION["itemtitle"]=$row1['title'];
   $current_price = $row1['bidValue'];
   $num_bids = $row2['c'];
   $end_time = new DateTime($row1['closeDate']);
@@ -274,3 +275,4 @@ function removeFromWatchlist(button) {
 
 } // End of addToWatchlist func
 </script>
+
