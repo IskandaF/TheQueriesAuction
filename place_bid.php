@@ -1,7 +1,9 @@
 <?php
 include_once("mysqli.php");
 include_once("mail/bid_placed.php");
-session_start();
+if (session_status() == PHP_SESSION_NONE){
+  session_start();
+};
 ?>
 
 

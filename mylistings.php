@@ -1,7 +1,15 @@
 <?php include_once("header.php")?>
 <?php require("utilities.php")?>
 
-<?php session_start(); ?>
+<?php 
+
+if(!isset($_COOKIE["PHPSESSID"]))
+{
+  session_start();
+} 
+ 
+
+?>
 <div class="container">
 
 <h2 class="my-3">My listings</h2>
@@ -34,7 +42,7 @@
   if (!$connection) {
 	  die("Connection Failed: ".mysql_connect_error());
   }
-
+if (isset($_SESSION['userID'])){
   $currentuserID = $_SESSION['userID'];
   //echo gettype($currentuserID);
 
@@ -111,7 +119,10 @@
    </body>
 
 	*/
-
+		}
+		else{
+			echo("Log in");
+		}
 
   ?>
 

@@ -65,6 +65,7 @@ require_once ("mysqli.php");
 
 <div class="text-center">Already have an account? <a href="" data-toggle="modal" data-target="#loginModal">Login</a>
 
+<script src="js/password_validation.js"></script>
 </div>
 
 <?php include_once("footer.php")?>

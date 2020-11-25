@@ -78,7 +78,7 @@ if ($connection->query($salesQuery) === TRUE) {
 
 
       ///Iskander, add email notification function for successful sale here
-
+      header('Location: '.$_SERVER['PHP_SELF']);
       //If unsuccessful, write a note in the saleslogs.txt file with the error message
     } else {
       echo "Error: " . $sql . "<br>" . $connection->error;

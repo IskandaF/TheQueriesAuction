@@ -1,6 +1,13 @@
 <?php include_once("header.php")?>
 <?php include_once("mysqli.php")?>
-<?php session_start(); ?>
+<?php 
+
+if(!isset($_COOKIE["PHPSESSID"]))
+{
+  session_start();
+}  
+
+?>
 
 
 <?php
@@ -22,6 +29,8 @@ while ($row1 = $catresult->fetch_assoc()) {
 }
 */
 ?>
+
+<?php if (isset($_SESSION['logged_in'])) : ?>
 
 <div class="container">
 
@@ -116,6 +125,9 @@ while ($row1 = $catresult->fetch_assoc()) {
 </div>
 
 </div>
+<?php else : ?>
 
+<a href="#">Log in</a>
+<?php endif; ?>
 
 <?php include_once("footer.php")?>

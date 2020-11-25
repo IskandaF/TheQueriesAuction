@@ -1,6 +1,8 @@
 <?php include_once("header.php");
 include_once("mysqli.php");
-session_start();
+if (session_status() == PHP_SESSION_NONE){
+  session_start();
+};
 ?>
 
 

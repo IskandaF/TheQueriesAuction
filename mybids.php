@@ -1,7 +1,14 @@
 <?php include_once("header.php")?>
 <?php require("utilities.php")?>
 <?php include_once("mysqli.php")?>
-<?php session_start(); ?>
+<?php 
+
+if(!isset($_COOKIE["PHPSESSID"]))
+{
+  session_start();
+} 
+
+?>
 
 <div class="container">
 
@@ -21,7 +28,7 @@
 
   // TODO: Loop through results and print them out as list items.
 
-
+  if (isset($_SESSION['userID'])){
   $currentuserID = $_SESSION['userID'];
   //echo gettype($currentuserID);
 
@@ -29,6 +36,9 @@
   //echo $currentuserID ;
 
   $result = mysqli_query($connection, $sql);
+
+
+
 
   if(mysqli_num_rows($result) == 0)
   {
@@ -38,9 +48,28 @@
   else {
 
    	  while ($row = mysqli_fetch_array($result)){
-		  print_listingg_li($row['itemID'], $row['title'], $row['description'], $row['bidValue'], new DateTime($row['closeDate']));
+
+      $highestbidderquery="SELECT b.bidderUserID from Bids b,Items i where i.highestbidID=b.bidID and i.itemID='".$row["itemID"]."'";
+      $resulthighestbidder = mysqli_query($connection, $highestbidderquery);
+      $highestbidderrow=mysqli_fetch_array($resulthighestbidder);
+
+      if ($highestbidderrow["bidderUserID"]==$_SESSION['userID']){
+        $biddingmessage=("<p style='color:green'>You are the highest bidder</p>");
+      }
+      else{
+        $biddingmessage=("<p style='color:red'>You are not the highest bidder</p>");
+      }
+
+      print_listingg_li($row['itemID'], $row['title'], $row['description'], $row['bidValue'], new DateTime($row['closeDate']),$biddingmessage);
+
+
+
 	}
 }
+  }
+  else{
+    echo("Log in");
+  }
 	?>
 
 
