@@ -1,18 +1,15 @@
 <?php include_once("header.php")?>
 <?php require("utilities.php")?>
 <?php include_once("mysqli.php")?>
-<?php 
-
-if(!isset($_COOKIE["PHPSESSID"]))
+<?php if(!isset($_COOKIE["PHPSESSID"]))
 {
   session_start();
-} 
-
-?>
+}  ?>
 
 <div class="container">
 
 <h2 class="my-3">My bids</h2>
+<a href="browse.php" class="btn btn-outline-secondary btn-sm align-self-right" class="row" style="float: right;" >Start Bidding</a>
 
 <?php
   // This page is for showing a user the auctions they've bid on.
@@ -28,28 +25,25 @@ if(!isset($_COOKIE["PHPSESSID"]))
 
   // TODO: Loop through results and print them out as list items.
 
-  if (isset($_SESSION['userID'])){
+
   $currentuserID = $_SESSION['userID'];
   //echo gettype($currentuserID);
 
-  $sql = " SELECT * FROM Bids INNER JOIN Items ON Bids.itemID = Items.itemID WHERE bidderUserID = $currentuserID ";
+  $sql = " SELECT * FROM Bids INNER JOIN Items ON Bids.itemID = Items.itemID WHERE bidderUserID = $currentuserID AND sellerID != $currentuserID ";
   //echo $currentuserID ;
 
   $result = mysqli_query($connection, $sql);
 
-
-
-
   if(mysqli_num_rows($result) == 0)
   {
   	echo('You do not have any biddings yet.');
+	
   }
 
   else {
 
    	  while ($row = mysqli_fetch_array($result)){
-
-      $highestbidderquery="SELECT b.bidderUserID from Bids b,Items i where i.highestbidID=b.bidID and i.itemID='".$row["itemID"]."'";
+              $highestbidderquery="SELECT b.bidderUserID from Bids b,Items i where i.highestbidID=b.bidID and i.itemID='".$row["itemID"]."'";
       $resulthighestbidder = mysqli_query($connection, $highestbidderquery);
       $highestbidderrow=mysqli_fetch_array($resulthighestbidder);
 
@@ -59,18 +53,9 @@ if(!isset($_COOKIE["PHPSESSID"]))
       else{
         $biddingmessage=("<p style='color:red'>You are not the highest bidder</p>");
       }
-
-      print_listingg_li($row['itemID'], $row['title'], $row['description'], $row['bidValue'], new DateTime($row['closeDate']),$biddingmessage);
-
-
-
+		  print_listingg_li($row['itemID'], $row['title'], $row['description'], $row['bidValue'], new DateTime($row['closeDate']),$biddingmessage);
 	}
 }
-  }
-  else{
-    echo '<button style="color:white;background:green;margin-top:60px;margin-left:60px;" type="button" class="btn nav-link" data-toggle="modal" data-target="#loginModal">Please Login</button>';
-
-  }
 	?>
 
 
