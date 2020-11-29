@@ -10,10 +10,10 @@ if (session_status() == PHP_SESSION_NONE) {
 
 ?>
 <div class="container">
-<h2 class="my-3">My Listings</h2>
+<h2 class="my-3">My Listings <a href="create_auction.php" class="btn btn-outline-secondary btn-sm align-self-right" class="row" style="float: right;" >Create Auction</a></h2>
 
 <?php if(isset ($_SESSION["logged_in"])) : ?>
-<a href="create_auction.php" class="btn btn-outline-secondary btn-sm align-self-right" class="row" style="float: right;" >Create Auction</a>
+
 
 
 <!--<h2 class="my-3">My listings</h2>
