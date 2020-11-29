@@ -14,18 +14,7 @@ use PHPMailer\PHPMailer\Exception;
 
 
 
-      //Update saleSuccess column with 'n' if reservePrice > bidValue or if highest bidderUserID = sellerID, else 'y'
 
-      $unsuccessfulUpdate = "UPDATE ExpiredAuctions e, Bids b SET e.saleSuccess = 'n'
-                              WHERE (e.highestbidID = b.bidID AND e.reservePrice > b.bidValue)
-                              OR (e.highestbidID = b.bidID AND b.bidderUserID = e.sellerID) ";
-      $connection->query($unsuccessfulUpdate);
-
-
-      $successfulUpdate = "UPDATE ExpiredAuctions e, Bids b SET e.saleSuccess = 'y'
-                            WHERE e.highestbidID = b.bidID AND e.reservePrice <= b.bidValue
-                            AND b.bidderUserID != e.sellerID";
-      $connection->query($successfulUpdate);
 
 
 //Get the number of auctions ended
@@ -121,14 +110,18 @@ if ($connection->query($salesQuery) === TRUE) {
       echo $numsales . " old record(s) removed from ExpiredAuction table successfully <br>";
 
 
-      //Update saleSuccess column with 'y' if bidValue >= reservePrice, else 'n'
-      $successfulUpdate = "UPDATE ExpiredAuctions e, Bids b SET e.saleSuccess = 'y'
-                            WHERE e.highestbidID = b.bidID AND e.reservePrice <= b.bidValue";
-      $connection->query($successfulUpdate);
+      //Update saleSuccess column with 'n' if reservePrice > bidValue or if highest bidderUserID = sellerID, else 'y'
 
       $unsuccessfulUpdate = "UPDATE ExpiredAuctions e, Bids b SET e.saleSuccess = 'n'
-                              WHERE e.highestbidID = b.bidID AND e.reservePrice > b.bidValue";
+                              WHERE (e.highestbidID = b.bidID AND e.reservePrice > b.bidValue)
+                              OR (e.highestbidID = b.bidID AND b.bidderUserID = e.sellerID) ";
       $connection->query($unsuccessfulUpdate);
+
+
+      $successfulUpdate = "UPDATE ExpiredAuctions e, Bids b SET e.saleSuccess = 'y'
+                            WHERE e.highestbidID = b.bidID AND e.reservePrice <= b.bidValue
+                            AND b.bidderUserID != e.sellerID";
+      $connection->query($successfulUpdate);
 
 
       //Write a note in the saleslogs.txt file to confirm the transaction
@@ -138,8 +131,28 @@ if ($connection->query($salesQuery) === TRUE) {
       fclose($myfile);
 
 
-      
+      //insert bids for expired items into ExpiredBids table
+      $expiredBids = "INSERT INTO ExpiredBids (bidDate, bidderUserID, bidID, bidValue, itemID)
+                      SELECT bidDate, bidderUserID, bidID, bidValue, itemID
+                      FROM Bids
+                      WHERE itemID IN (
+                      SELECT itemID FROM ExpiredAuctions)";
+      if ($connection->query($expiredBids) === TRUE) {
+        echo "Bids for expired items moved to ExpiredBids table <br>";
 
+
+      $removeBids = "DELETE FROM Bids WHERE bidID IN (
+                      SELECT bidID FROM ExpiredBids)";
+      if ($connection->query($removeBids) === TRUE) {
+        echo "Bids for expired items removed from Bids table <br> ";
+      } else {
+        echo "Error: " . $sql . "<br>" . $connection->error;
+      }
+
+
+    } else {
+      echo "Error: " . $sql . "<br>" . $connection->error;
+    }
 
 
 
@@ -176,32 +189,32 @@ if ($connection->query($salesQuery) === TRUE) {
     sendEmail($email);
 
       // Email reporting to the user
-      
+
       // Email reporting to the user
 
       // header('Location: '.$_SERVER['PHP_SELF']);
 
-            
-    
+
+
     }
-          
+
           };
-          
+
             if ($numsalesrow['bidValue'] == $numsalesrow['reservePrice']){
               if ($numsalesrow["sellerID"] == $numsalesrow["bidderUserID"]){
             $email = new PHPMailer(true);
             $email->Subject = "Selling notification";
-  
+
             $email->Body    = 'We are really sorry to inform you that no one has bid on your item ' . $numsalesrow['itemID'];
-  
+
             $email->AltBody = 'We are really sorry to inform you that no one has bid on your item ' . $numsalesrow['itemID'];
-  
+
             $email->addAddress($numsalesrow["email"]);
             sendEmail($email);
             $flag=True;
           }
       //  if ($flag){
-             
+
       //              $email = new PHPMailer(true);
       //     $email->Subject = "Selling notification";
 
@@ -217,7 +230,7 @@ if ($connection->query($salesQuery) === TRUE) {
 
       //        }
             }
-            
+
               if ($numsalesrow['bidValue'] <= $numsalesrow['reservePrice']){
                 if ($numsalesrow["sellerID"] != $numsalesrow["bidderUserID"]){
                    $email = new PHPMailer(true);
@@ -234,7 +247,7 @@ if ($connection->query($salesQuery) === TRUE) {
           sendEmail($email);
               }
             }
-          
+
     } else {
             //If unsuccessful, write a note in the saleslogs.txt file with the error message
       echo "Error: " . $sql . "<br>" . $connection->error;
