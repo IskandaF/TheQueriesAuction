@@ -3,14 +3,14 @@
 <?php include_once("mysqli.php")?>
 
 
-
 <?php
+
   // Get info from the URL:
   $item_id = $_GET['item_id'];
   $_SESSION['itemID'] = $item_id;
 
 
-  $stmt1 = "SELECT i.itemID, i.reservePrice, i.title, i.description, b.bidValue, i.closeDate, i.sellerID, b.bidID, b.bidderUserID FROM Items i, Bids b WHERE i.highestbidID = b.bidID AND i.itemID = $item_id";
+  $stmt1 = "SELECT i.itemID, i.reservePrice, i.title, i.description, b.bidValue, i.closeDate, i.sellerID, b.bidID, b.bidderUserID,i.catID FROM Items i, Bids b WHERE i.highestbidID = b.bidID AND i.itemID = $item_id";
   $result1 = mysqli_query($connection, $stmt1);
   $row1 = mysqli_fetch_array($result1);
 
@@ -31,9 +31,13 @@
 
   // DELETEME: For now, using placeholder data.
 
+
+
+
   $title = $row1['title'];
   $description = $row1['description'];
   $_SESSION["itemdescription"]=$description;
+  $_SESSION["itemtitle"]=$row1['title'];
   $current_price = $row1['bidValue'];
   $num_bids = $row2['c'];
   $end_time = new DateTime($row1['closeDate']);
@@ -42,6 +46,14 @@
   $currentuserID = $useridrow['userID'];
   $highestbidderID = $row1['bidderUserID'];
 
+// categoryID query
+  {
+
+    $categoryIDquery = "SELECT categoryDescription from Categories where categoryID='".$row1['catID']."'";
+    $catidresult = mysqli_query($connection, $categoryIDquery);
+    $catidrow = mysqli_fetch_array($catidresult);
+
+  }
 
 
 
@@ -132,6 +144,16 @@
     </div>
 
   </div>
+  <!-- Category -->
+  <div class="col-sm-8"> <!-- Left col with item info -->
+
+    <div class="itemDescription">
+
+    <p><b> Category: </b><?php echo($catidrow["categoryDescription"]); ?></p>
+    </div>
+
+  </div>
+ 
 
   <div class="col-sm-4"> <!-- Right col with bidding info -->
 
@@ -253,3 +275,4 @@ function removeFromWatchlist(button) {
 
 } // End of addToWatchlist func
 </script>
+

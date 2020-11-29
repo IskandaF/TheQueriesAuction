@@ -1,6 +1,13 @@
 <?php include_once("header.php")?>
 <?php include_once("mysqli.php")?>
-<?php session_start(); ?>
+<?php 
+
+if(!isset($_COOKIE["PHPSESSID"]))
+{
+  session_start();
+}  
+
+?>
 
 
 <?php
@@ -23,11 +30,15 @@ while ($row1 = $catresult->fetch_assoc()) {
 */
 ?>
 
-<div class="container">
 
+
+<div class="container">
+<h2 class="my-3">Create new auction</h2>
+<?php if (isset($_SESSION['logged_in'])) : ?>
 <!-- Create auction form -->
 <div style="max-width: 800px; margin: 10px auto">
-  <h2 class="my-3">Create new auction</h2>
+ 
+
   <div class="card">
     <div class="card-body">
       <!-- Note: This form does not do any dynamic / client-side /
@@ -116,6 +127,13 @@ while ($row1 = $catresult->fetch_assoc()) {
 </div>
 
 </div>
+<?php else : 
+  echo "<div class='container'>";
+  echo '<button style="color:white;background:green;margin-top:60px;margin-left:60px;" type="button" class="btn nav-link" data-toggle="modal" data-target="#loginModal">Please Login</button>';
+  echo "</div>"
 
+  ?>
+
+<?php endif; ?>
 
 <?php include_once("footer.php")?>

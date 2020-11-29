@@ -172,7 +172,9 @@ if (isset($_SESSION["fail"])){
      retrieve data from the database. (If there is no form data entered,
      decide on appropriate default value/default query to make. */
  $mysqli = new mysqli("localhost","root","root","AuctionDB");
-
+ if (!isset($_GET['keyword'])){
+  $_GET['keyword']="%%";
+}
  $search_count = $mysqli->prepare("SELECT i.itemID, i.title, i.description, b.bidValue, i.closeDate, b.bidID FROM Items i, Bids b
  WHERE i.highestbidID = b.bidID AND i.title LIKE ? AND i.catID LIKE ?;");
  $keyword_SQL = "%" . $_GET['keyword'] . "%";
@@ -186,9 +188,7 @@ if (isset($_SESSION["fail"])){
  $search = $mysqli->prepare("SELECT i.itemID, i.title, i.description, b.bidValue, i.closeDate, b.bidID FROM Items i, Bids b
  WHERE i.highestbidID = b.bidID AND i.title LIKE ? AND i.catID LIKE ? ORDER BY $ordering LIMIT $limit OFFSET $offset;");
 
- if (!isset($_GET['keyword'])){
-   $_GET['keyword']="%%";
- }
+
 
  $keyword_SQL = "%" . $_GET['keyword'] . "%";
 

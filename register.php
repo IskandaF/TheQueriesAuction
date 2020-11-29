@@ -4,19 +4,29 @@
 include_once("header.php");
 require_once ("mysqli.php");
 
+if (session_status() == PHP_SESSION_NONE) {
+  session_start();
+}
+
 ?>
 
 
 
-<script type="text/javascript">
-  alert("Hey");
-  const password=document.getElementById("password");
-  const confirmed_password=document.getElementById("confirmed_password");
-  if password!=confirmed_password{
-    alert("Please enter same passwords");
-  }
-</script>
+
 <div class="container">
+
+
+<?php
+if (isset($_SESSION["success"])){
+  echo '<p style="color:green">'.$_SESSION['success']."</p>\n";
+  unset($_SESSION['success']);
+}
+
+if (isset($_SESSION["fail"])){
+  echo '<p style="color:red">'.$_SESSION['fail']."</p>\n";
+  unset($_SESSION['fail']);
+}
+?>
 <h2 class="my-3">Register new account</h2>
 
 <!-- Create auction form -->

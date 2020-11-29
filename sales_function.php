@@ -131,8 +131,28 @@ if ($connection->query($salesQuery) === TRUE) {
       fclose($myfile);
 
 
+      //insert bids for expired items into ExpiredBids table
+      $expiredBids = "INSERT INTO ExpiredBids (bidDate, bidderUserID, bidID, bidValue, itemID)
+                      SELECT bidDate, bidderUserID, bidID, bidValue, itemID
+                      FROM Bids
+                      WHERE itemID IN (
+                      SELECT itemID FROM ExpiredAuctions)";
+      if ($connection->query($expiredBids) === TRUE) {
+        echo "Bids for expired items moved to ExpiredBids table <br>";
 
 
+      $removeBids = "DELETE FROM Bids WHERE bidID IN (
+                      SELECT bidID FROM ExpiredBids)";
+      if ($connection->query($removeBids) === TRUE) {
+        echo "Bids for expired items removed from Bids table <br> ";
+      } else {
+        echo "Error: " . $sql . "<br>" . $connection->error;
+      }
+
+
+    } else {
+      echo "Error: " . $sql . "<br>" . $connection->error;
+    }
 
 
 

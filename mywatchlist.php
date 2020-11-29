@@ -1,7 +1,15 @@
 <?php include_once("header.php")?>
 <?php require("utilities.php")?>
 <?php include_once("mysqli.php")?>
-<?php session_start(); ?>
+<?php 
+
+if(!isset($_COOKIE["PHPSESSID"]))
+{
+  session_start();
+} 
+
+
+?>
 
 <div class="container">
 
@@ -9,7 +17,10 @@
 
 <?php
 
+if (isset($_SESSION['logged_in'])) {
 $currentuserID = $_SESSION['userID'];
+
+
 
 $watchquery = "SELECT i.itemID, i.title, i.description, b.bidValue, i.closeDate, b.bidID
           FROM Items i, Bids b, Watchlist w
@@ -21,7 +32,7 @@ or die('Error making select users query' .
 mysql_error());
 
 // Elina - copy this code to use in mylistings.php
-if (isset($_SESSION['logged_in'])) {
+
   while ($watchrow = $watchresult->fetch_assoc()) {
     $item_id = $watchrow['itemID'];
 
@@ -44,10 +55,11 @@ if (isset($_SESSION['logged_in'])) {
       print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_time);
     //}
   }
-} else {
-  echo 'Please log in.';
-  header("refresh:2;url=browse.php");
+
 }
+else{
+  echo '<button style="color:white;background:green;margin-top:60px;margin-left:60px;" type="button" class="btn nav-link" data-toggle="modal" data-target="#loginModal">Please Login</button>';
+};
 ?>
 
 
