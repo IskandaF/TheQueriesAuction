@@ -5,7 +5,7 @@ session_start();
 <?php require("utilities.php")?>
 <?php
 
-$query = "SELECT userID FROM Users LIMIT 1";
+$query = "SELECT userID FROM Users";
 $result = mysqli_query($connection,$query)
 or die('Error making select users query' .
 mysql_error());
@@ -35,7 +35,7 @@ else {
 <!-- When this form is submitted, this PHP page is what processes it.
      Search/sort specs are passed to this page through parameters in the URL
      (GET method of passing data to a page). -->
-<form method="get" action="browse.php">
+<form method="get" action="browse_with_search.php">
   <div class="row">
     <div class="col-md-5 pr-0">
       <div class="form-group">
@@ -134,6 +134,10 @@ else {
   }
 $offset = 10 * ((int) $curr_page-1);
 
+//echo $keyword . '<br>';
+//echo $category. '<br>';
+//echo $ordering. '<br>';
+
   /* TODO: Use above values to construct a query. Use this query to
      retrieve data from the database. (If there is no form data entered,
      decide on appropriate default value/default query to make. */
@@ -142,7 +146,7 @@ $offset = 10 * ((int) $curr_page-1);
 
 
  $search = $mysqli->prepare("SELECT i.itemID, i.title, i.description, b.bidValue, i.closeDate, b.bidID FROM Items i, Bids b
- WHERE i.highestbidID = b.bidID AND i.title LIKE ? AND i.categoryID LIKE ? ORDER BY $ordering LIMIT 10 OFFSET $offset;");
+ WHERE i.highestbidID = b.bidID AND i.title LIKE ? AND i.catID LIKE ? ORDER BY $ordering LIMIT 10 OFFSET $offset;");
  $keyword_SQL = "%" . $_GET['keyword'] . "%";
 
  $search -> bind_Param("ss", $keyword_SQL, $category);
@@ -153,7 +157,7 @@ $offset = 10 * ((int) $curr_page-1);
 
  if(empty(mysqli_num_rows($search_got))){
  echo 'Sorry there are no listings that match your search, please alter your search criteria or return to: <a class="page-link" href = "browse.php">browse catalog</a>';
- }
+}
 
  while ($row_search = $search_got->fetch_assoc()) { // Add a clause in this while loop that says 'AND b.bidderUserID = userID'
 
@@ -173,6 +177,7 @@ $offset = 10 * ((int) $curr_page-1);
     // This uses a function defined in utilities.php
     print_listing_li($item_id_search, $title, $description, $current_price, $num_bids, $end_time);
 
+
   }
 
 
@@ -186,7 +191,7 @@ $offset = 10 * ((int) $curr_page-1);
   $result1 = mysqli_query($connection, $stmt1);
 
 $search_count = $mysqli->prepare("SELECT i.itemID, i.title, i.description, b.bidValue, i.closeDate, b.bidID FROM Items i, Bids b
- WHERE i.highestbidID = b.bidID AND i.title LIKE ? AND i.categoryID LIKE ? ORDER BY $ordering;");
+ WHERE i.highestbidID = b.bidID AND i.title LIKE ? AND i.catID LIKE ? ORDER BY $ordering;");
  $keyword_SQL = "%" . $_GET['keyword'] . "%";
 
  $search_count -> bind_Param("ss", $keyword_SQL, $category);
@@ -233,7 +238,6 @@ $search_count = $mysqli->prepare("SELECT i.itemID, i.title, i.description, b.bid
   $current_price = 13.50;
   $num_bids = 3;
   $end_date = new DateTime('2020-11-02T00:00:00');
-
   print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
   */
 ?>
