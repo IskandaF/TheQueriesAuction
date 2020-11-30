@@ -47,6 +47,14 @@ $bidDate = date("Y-m-d");
 //itemID from session variable
 $itemID = $_SESSION['itemID'];
 
+$maxBidIDQuery = "SELECT MAX(bidID) m FROM (
+                      SELECT bidID FROM Bids
+                      UNION
+                      SELECT bidID FROM ExpiredBids) a";
+$maxBidIDResult = mysqli_query($connection, $maxBidIDQuery);
+$maxBidIDRow = mysqli_fetch_array($maxBidIDResult);
+//echo $maxBidIDRow['m'] . '<br>';
+$maxBidID = $maxBidIDRow['m'] + 1;
 
 //Check user is logged in
 if (isset($_SESSION['logged_in'])) {
@@ -57,8 +65,8 @@ if (isset($_SESSION['logged_in'])) {
 
     //Check bid is higher than previous highest bid and reserve price
     if ($bidValue > $_SESSION['currentPrice'])  { //In hindsight, reservePrice shouldn't stop you from placing a lower bid. It should just cancel the final sale if the final bid is lower
-      $stmt4 = "INSERT INTO Bids (bidderUserID, bidValue, bidDate, itemID)
-                VALUES ('".$userID."', '".$bidValue."', '".$bidDate."', '".$itemID."')";
+      $stmt4 = "INSERT INTO Bids (bidID, bidderUserID, bidValue, bidDate, itemID)
+                VALUES ('".$maxBidID."', '".$userID."', '".$bidValue."', '".$bidDate."', '".$itemID."')";
 
       //add new bid to Bids table
       if ($connection->query($stmt4) === TRUE) {
@@ -81,7 +89,7 @@ if (isset($_SESSION['logged_in'])) {
           if ($connection->query($updatehighbid) === TRUE) {
             echo "Highest bid value updated.";
             $email = new PHPMailer(true);
-            $email->addAddress($_SESSION['username']); 
+            $email->addAddress($_SESSION['username']);
             $email->Subject = 'You just put the highest bid for the item '.$_SESSION["itemtitle"];
             $email->Body    = 'You just have put the highest bid of <b>£'.$bidValue.'</b> for the '.$_SESSION["itemtitle"];
             $email->AltBody = 'You just have put the highest bid of £'.$bidValue.' for the '.$_SESSION["itemtitle"];
@@ -107,14 +115,14 @@ if (isset($_SESSION['logged_in'])) {
         }
 
       };
-      
+
 
       $watchlistusers='SELECT email
       FROM Watchlist w
       join users u on w.userID=u.userID
       WHERE w.itemID='.$_SESSION['itemID'];
       $otherwatchlist=$connection->query($watchlistusers);
-      
+
       // updating watchlist users
       while($row = mysqli_fetch_array($otherwatchlist)){
         if ($row["email"]!=$_SESSION['username']){
