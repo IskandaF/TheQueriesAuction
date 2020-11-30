@@ -107,7 +107,7 @@ if ($connection->query($salesQuery) === TRUE) {
                       WHERE closeDate <= CURDATE()";
 
     if ($connection->query($removeQuery) === TRUE) {
-      echo $numsales . " old record(s) removed from ExpiredAuction table successfully <br>";
+      echo $numsales . " old record(s) removed from Items table successfully <br>";
 
 
       //Update saleSuccess column with 'n' if reservePrice > bidValue or if highest bidderUserID = sellerID, else 'y'
