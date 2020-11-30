@@ -1,7 +1,7 @@
 <?php include_once("header.php")?>
 <?php require("utilities.php")?>
 
-<?php 
+<?php
 
 if (session_status() == PHP_SESSION_NONE) {
   session_start();
@@ -11,11 +11,7 @@ if (session_status() == PHP_SESSION_NONE) {
 ?>
 <div class="container">
 <h2 class="my-3">My Listings <a href="create_auction.php" class="btn btn-outline-secondary btn-sm align-self-right" class="row" style="float: right;" >Create Auction</a></h2>
-
 <?php if(isset ($_SESSION["logged_in"])) : ?>
-
-
-
 <!--<h2 class="my-3">My listings</h2>
 <div class="row">
 <div class="col-sm-4 align-self-right">
@@ -60,9 +56,10 @@ if (session_status() == PHP_SESSION_NONE) {
   $currentuserID = $_SESSION['userID'];
   //echo gettype($currentuserID);
 
+
   $sql = " SELECT i.itemID, i.reservePrice, i.title, i.closeDate, i.catID, b.bidValue FROM Items i, Bids b WHERE i.sellerID = $currentuserID AND i.highestbidID = b.bidID ";
-  
-  $sqla = " SELECT e.itemID, e.reservePrice, e.title, e.closeDate, e.catID, b.bidValue, e.saleSuccess FROM Bids b, ExpiredAuctions e WHERE e.sellerID = $currentuserID AND e.highestbidID = b.bidID ";
+
+  $sqla = " SELECT e.itemID, e.reservePrice, e.title, e.closeDate, e.catID, b.bidValue, e.saleSuccess FROM ExpiredBids b, ExpiredAuctions e WHERE e.sellerID = $currentuserID AND e.highestbidID = b.bidID ";
 
   $result = mysqli_query($connection, $sql);
   $resulta = mysqli_query($connection, $sqla);
@@ -70,10 +67,10 @@ if (session_status() == PHP_SESSION_NONE) {
   if ( mysqli_num_rows($result) == 0 AND mysqli_num_rows($resulta) == 0 )
   {
   	echo('You do not have any listings yet.');
-	
+
   }
 
-  elseif ( mysqli_num_rows($result) != 0 AND mysqli_num_rows($resulta) == 0 )	  
+  elseif ( mysqli_num_rows($result) != 0 AND mysqli_num_rows($resulta) == 0 )
   {
 	  echo('
 
@@ -81,12 +78,12 @@ if (session_status() == PHP_SESSION_NONE) {
  		 <!DOCTYPE html>
 
    <html>
-   <title> 
+   <title>
    <head> Running Auctions </head>
    </title>
    <body>
   	 <table>
- 			 
+
 	          <table style="width:100%" border=\'1\'>
 	          <caption> Running Auctions </caption>
 			  <table style="width:100%" border=\'1\'>
@@ -110,23 +107,23 @@ if (session_status() == PHP_SESSION_NONE) {
 	echo ('<td>'.$row['closeDate'].'</td>');
 	echo ('<td>'.$row['catID'].'</td>');
 	echo ('<td>'.$row['reservePrice'].'</td>');
-	echo ('<td>'.$row['bidValue'].'</td></tr>');	
+	echo ('<td>'.$row['bidValue'].'</td></tr>');
 	}
-	
+
   }
-	 
+
  elseif( mysqli_num_rows($result) == 0 AND mysqli_num_rows($resulta) != 0)
  {
 		echo('
 			 <!DOCTYPE html>
 
 	  <html>
-	  <title>   
+	  <title>
 	  <head> Expired Auctions </head>
 	  </title>
 	  <body>
 	 	 <table>
-		
+
 				  <table style="width:100%" border=\'1\'>
 				  <caption> Expired Auctions </caption>
 			 	  <table style="width:100%" border=\'1\'>
@@ -154,8 +151,8 @@ if (session_status() == PHP_SESSION_NONE) {
 	   echo ('<td>'.$row['bidValue'].'</td>');
 	   echo ('<td>'.$row['saleSuccess'].'</td></tr>');
 	   }
- }	
-		
+ }
+
  elseif( mysqli_num_rows($result) != 0 AND mysqli_num_rows($resulta) != 0 )
  {
   echo('
@@ -164,7 +161,7 @@ if (session_status() == PHP_SESSION_NONE) {
 		 <!DOCTYPE html>
 
   <html>
-  <title>  
+  <title>
   <head> Running auctions </head>
   </title>
   <body>
@@ -172,7 +169,7 @@ if (session_status() == PHP_SESSION_NONE) {
 	          <table style="width:100%" border=\'1\'>
 	          <caption> Running Auctions </caption>
 			  <table style="width:100%" border=\'1\'>
-			  
+
 
 
 		 <tr>
@@ -186,7 +183,7 @@ if (session_status() == PHP_SESSION_NONE) {
 		 </tr>
 
 
- 
+
 ');
 while ($row = mysqli_fetch_array($result)){
 echo ('<tr><td>'.$row['itemID'].'</td>');
@@ -194,7 +191,7 @@ echo ('<td>'.$row['title'].'</td>');
 echo ('<td>'.$row['closeDate'].'</td>');
 echo ('<td>'.$row['catID'].'</td>');
 echo ('<td>'.$row['reservePrice'].'</td>');
-echo ('<td>'.$row['bidValue'].'</td></tr>');	
+echo ('<td>'.$row['bidValue'].'</td></tr>');
 }
 
 echo nl2br ('');
@@ -202,17 +199,17 @@ echo nl2br ('');
 		 <!DOCTYPE html>
 
   <html>
-  <title>   
+  <title>
   <head> Expired Auctions </head>
   </title>
   <body>
  	 <table>
-	 
+
 			  <table style="width:100%" border=\'1\'>
 			  <caption> Expired Auctions </caption>
 		 	  <table style="width:100%" border=\'1\'>
-		      
-			 
+
+
 
 		 <tr>
 			 <th> Item ID </th>
@@ -236,10 +233,10 @@ echo nl2br ('');
    echo ('<td>'.$row['bidValue'].'</td>');
    echo ('<td>'.$row['saleSuccess'].'</td></tr>');
    }
- 	
+
  }
-	
-		
+
+
 
 
   ?>
