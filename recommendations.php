@@ -63,7 +63,15 @@ echo "<h3 class='my-3'>Popular Listings</h3>";
         }
         }
       // TODO: Loop through results and print them out as list items.
-
+$current_userID = $_SESSION['userID'];   //Displays recommendations based off users activity if users have placed bids, otherwise the following recommendation sections are hidden
+$mysqli_active_user = new mysqli("localhost","root","root","AuctionDB");
+$active_user_query = $mysqli_active_user->prepare("SELECT bidID FROM Bids WHERE bidderUserID = ?");
+$active_user_query->bind_Param("s", $current_userID);
+$active_user_query->execute();
+$active_user = $active_user_query->get_result();
+$AU_result = $active_user->fetch_assoc();
+echo empty($AU_result);
+if(!empty($AU_result)){
 
     $mysqli_0 = new mysqli("localhost","root","root","AuctionDB");
     $cat_fy_query = $mysqli_0->prepare("SELECT DISTINCT(i.catID), COUNT(b.bidID) FROM Bids b JOIN Items i ON i.itemID = b.itemID
@@ -178,6 +186,7 @@ echo "<h3 class='my-3'>Popular Listings</h3>";
         }
 
       // TODO: Loop through results and print them out as list items.
+      }
       }
    else{
       echo '<button style="color:white;background:green;margin-top:60px;margin-left:60px;" type="button" class="btn nav-link" data-toggle="modal" data-target="#loginModal">Please Login</button>';

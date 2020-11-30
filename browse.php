@@ -199,7 +199,7 @@ if (isset($_SESSION["fail"])){
  $search_got = $search->get_result();
 
  if(empty(mysqli_num_rows($search_got))){
- echo 'Sorry, there are no listings that match your search, please alter your search criteria or return to:  <a class="page-link" href = "browse.php">Browse Catalog</a>';
+ echo ' Sorry, there are no listings that match your search, please alter your search criteria or return to:  <a class="page-link" href = "browse.php">Browse Catalog</a>';
  }
 
 
