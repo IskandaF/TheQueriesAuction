@@ -15,15 +15,15 @@ if (session_status() == PHP_SESSION_NONE){
 
 
 <?php
-  // This page is for showing a buyer recommended items based on their bid 
-  // history. It will be pretty similar to browse.php, except there is no 
+  // This page is for showing a buyer recommended items based on their bid
+  // history. It will be pretty similar to browse.php, except there is no
   // search bar. This can be started after browse.php is working with a database.
   // Feel free to extract out useful functions from browse.php and put them in
   // the shared "utilities.php" where they can be shared by multiple files.
-  
-  
+
+
   // TODO: Check user's credentials (cookie/session).
-  
+
   // TODO: Perform a query to pull up auctions they might be interested in.
   //Below,User is presented with the 3 Most bid for items currently listed
   echo "<h2 class='my-3'>Recommended for you</h2>";
@@ -63,6 +63,15 @@ echo "<h3 class='my-3'>Popular Listings</h3>";
         }
         }
       // TODO: Loop through results and print them out as list items.
+$current_userID = $_SESSION['userID'];   //Displays recommendations based off users activity if users have placed bids, otherwise the following recommendation sections are hidden
+$mysqli_active_user = new mysqli("localhost","root","root","AuctionDB");
+$active_user_query = $mysqli_active_user->prepare("SELECT bidID FROM Bids WHERE bidderUserID = ?");
+$active_user_query->bind_Param("s", $current_userID);
+$active_user_query->execute();
+$active_user = $active_user_query->get_result();
+$AU_result = $active_user->fetch_assoc();
+echo empty($AU_result);
+if(!empty($AU_result)){
 
 
     $mysqli_0 = new mysqli("localhost","root","root","AuctionDB");
@@ -179,11 +188,10 @@ echo "<h3 class='my-3'>Popular Listings</h3>";
 
       // TODO: Loop through results and print them out as list items.
       }
+    }
    else{
       echo '<button style="color:white;background:green;margin-top:60px;margin-left:60px;" type="button" class="btn nav-link" data-toggle="modal" data-target="#loginModal">Please Login</button>';
-  
+
 
 }
 ?>
-
-

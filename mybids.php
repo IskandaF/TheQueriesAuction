@@ -8,8 +8,7 @@
 
 <div class="container">
 
-<h2 class="my-3">My bids</h2>
-<a href="browse.php" class="btn btn-outline-secondary btn-sm align-self-right" class="row" style="float: right;" >Start Bidding</a>
+<h2 class="my-3">My bids <a href="browse.php" class="btn btn-outline-secondary btn-sm align-self-right" class="row" style="float: right;" >Start Bidding</a></h2>
 
 <?php
   // This page is for showing a user the auctions they've bid on.
@@ -37,7 +36,7 @@
   if(mysqli_num_rows($result) == 0)
   {
   	echo('You do not have any biddings yet.');
-	
+
   }
 
   else {

@@ -31,7 +31,7 @@ $result = $stmt->get_result();
 $row = mysqli_fetch_array($result);
 if(password_verify($password, $row["password"])){
 	echo "Logged in";
-	header("refresh:2;url=index.php");
+	header("refresh:0.01;url=index.php");
 	$_SESSION["success"]="You're logged in now";
     $_SESSION['logged_in'] = true;
 	$_SESSION['username'] = $_POST["email"];
