@@ -6,9 +6,31 @@ if (session_status() == PHP_SESSION_NONE){
 ?>
 
 
+
 <div class="container my-5">
 
 <?php
+
+$maxItemIDQuery = "SELECT MAX(itemID) m FROM (
+                      SELECT itemID FROM Items
+                      UNION
+                      SELECT itemID FROM ExpiredAuctions) a";
+$maxItemIDResult = mysqli_query($connection, $maxItemIDQuery);
+$maxItemIDRow = mysqli_fetch_array($maxItemIDResult);
+//echo $maxItemIDRow['m'] . '<br>';
+$maxItemID = $maxItemIDRow['m'] + 1;
+//echo $maxItemID . '<br>';
+
+$maxBidIDQuery = "SELECT MAX(bidID) m FROM (
+                      SELECT bidID FROM Bids
+                      UNION
+                      SELECT bidID FROM ExpiredBids) a";
+$maxBidIDResult = mysqli_query($connection, $maxBidIDQuery);
+$maxBidIDRow = mysqli_fetch_array($maxBidIDResult);
+//echo $maxBidIDRow['m'] . '<br>';
+$maxBidID = $maxBidIDRow['m'] + 1;
+//echo $maxBidID . '<br>';
+
 
 
 $useridquery = "SELECT * FROM Users WHERE email = '" . $_SESSION['username'] . "' ";
@@ -24,6 +46,8 @@ $itemResCheck = $_POST['auctionReservePrice'];
 $endDate = $_POST['auctionEndDate'];
 $openDate = date("Y-m-d");
 $userID = $useridrow['userID'];
+
+
 
 
 if ($itemResCheck == "") {
@@ -67,8 +91,8 @@ if (isset($_SESSION['logged_in'])) {
   } else {
 
     //Update Items table
-    $itemsUpdateQuery = "INSERT INTO Items (title, description, reservePrice, openDate, closeDate, sellerID, catID)
-          VALUES ('".$itemTitle."', '".$itemDesc."', '".$itemRes."', '".$openDate."', '".$endDate."', '".$userID."', '".$itemCat."')";
+    $itemsUpdateQuery = "INSERT INTO Items (itemID, title, description, reservePrice, openDate, closeDate, sellerID, catID)
+          VALUES ('".$maxItemID."', '".$itemTitle."', '".$itemDesc."', '".$itemRes."', '".$openDate."', '".$endDate."', '".$userID."', '".$itemCat."')";
 
     if ($connection->query($itemsUpdateQuery) === TRUE) {
       //echo 'New item inserted into Items table <br>';
@@ -86,8 +110,8 @@ if (isset($_SESSION['logged_in'])) {
 
 
     //Update Bids table
-    $bidsUpdateQuery = "INSERT INTO Bids (bidderUserID, bidValue, bidDate, itemID)
-          VALUES ('".$userID."', '".$itemBid."', '".$openDate."', '".$newitemID."')";
+    $bidsUpdateQuery = "INSERT INTO Bids (bidID, bidderUserID, bidValue, bidDate, itemID)
+          VALUES ('".$maxBidID."', '".$userID."', '".$itemBid."', '".$openDate."', '".$newitemID."')";
 
     if ($connection->query($bidsUpdateQuery) === TRUE) {
       //echo 'New bid inserted into Bids table for new item <br>';
