@@ -70,7 +70,7 @@ $active_user_query->bind_Param("s", $current_userID);
 $active_user_query->execute();
 $active_user = $active_user_query->get_result();
 $AU_result = $active_user->fetch_assoc();
-echo empty($AU_result);
+
 if(!empty($AU_result)){
 
     $mysqli_0 = new mysqli("localhost","root","root","AuctionDB");
