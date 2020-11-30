@@ -25,7 +25,9 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a574ce25-3cde-4b2e-8fa5-50edc60b27e1" name="Default Changelist" comment="Login takes you straight to browse" />
+    <list default="true" id="a574ce25-3cde-4b2e-8fa5-50edc60b27e1" name="Default Changelist" comment="Login takes you straight to browse">
+      <change beforePath="$PROJECT_DIR$/process_registration.php" beforeDir="false" afterPath="$PROJECT_DIR$/process_registration.php" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -106,10 +108,10 @@
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="100" y="123" width="1240" height="677" key="ShowDiffWithBranchDialog/0.23.1440.877@0.23.1440.877" timestamp="1606741612109" />
-    <state x="320" y="201" key="Vcs.Push.Dialog.v2" timestamp="1606754846844">
+    <state x="320" y="201" key="Vcs.Push.Dialog.v2" timestamp="1606774266968">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state x="320" y="201" key="Vcs.Push.Dialog.v2/0.23.1440.877@0.23.1440.877" timestamp="1606754846844" />
+    <state x="320" y="201" key="Vcs.Push.Dialog.v2/0.23.1440.877@0.23.1440.877" timestamp="1606774266968" />
     <state x="481" y="202" key="VcsDiffUtil.ChangesDialog" timestamp="1606740312796">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
