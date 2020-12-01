@@ -1,11 +1,11 @@
 <?php include_once("header.php")?>
 <?php include_once("mysqli.php")?>
-<?php 
+<?php
 
 if(!isset($_COOKIE["PHPSESSID"]))
 {
   session_start();
-}  
+}
 
 ?>
 
@@ -37,7 +37,7 @@ while ($row1 = $catresult->fetch_assoc()) {
 <?php if (isset($_SESSION['logged_in'])) : ?>
 <!-- Create auction form -->
 <div style="max-width: 800px; margin: 10px auto">
- 
+
 
   <div class="card">
     <div class="card-body">
@@ -75,11 +75,11 @@ while ($row1 = $catresult->fetch_assoc()) {
               } */
                ?>
                <!-- Find a way to loop through values without hard coding? -->
-              <option value="CAT1">Class A Pharmaceutcals</option>
-              <option value="CAT2">Class B Pharmaceutcals</option>
-              <option value="CAT3">Class C Pharmaceutcals</option>
-              <option value="CAT4">Class D Pharmaceutcals</option>
-              <option value="CAT5">Class E Pharmaceutcals</option>
+              <option value="CAT1">Class A Pharmaceuticals</option>
+              <option value="CAT2">Class B Pharmaceuticals</option>
+              <option value="CAT3">Class C Pharmaceuticals</option>
+              <option value="CAT4">Class D Pharmaceuticals</option>
+              <option value="CAT5">Class E Pharmaceuticals</option>
               <option value="CAT6">Electronics</option>
               <option value="CAT7">Equipment</option>
               <option value="CAT8">Other</option>
@@ -127,7 +127,7 @@ while ($row1 = $catresult->fetch_assoc()) {
 </div>
 
 </div>
-<?php else : 
+<?php else :
   echo "<div class='container'>";
   echo '<button style="color:white;background:green;margin-top:60px;margin-left:60px;" type="button" class="btn nav-link" data-toggle="modal" data-target="#loginModal">Please Login</button>';
   echo "</div>"

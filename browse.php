@@ -1,6 +1,6 @@
-<?php include_once("header.php");
+<?php
+include_once("header.php");
 include_once("mysqli.php");
-
 if (session_status() == PHP_SESSION_NONE){
   session_start();
 };
@@ -168,8 +168,10 @@ if (isset($_SESSION["fail"])){
 //echo $keyword . '<br>';
 //echo $category. '<br>';
 //echo $ordering. '<br>';
-// Below, we count the total number of items that match the users search
 
+  /* TODO: Use above values to construct a query. Use this query to
+     retrieve data from the database. (If there is no form data entered,
+     decide on appropriate default value/default query to make. */
  $mysqli = new mysqli("localhost","root","root","AuctionDB");
  if (!isset($_GET['keyword'])){
   $_GET['keyword']="%%";
@@ -182,11 +184,7 @@ if (isset($_SESSION["fail"])){
  $search_got_count = $search_count->get_result();
  echo mysqli_num_rows($search_got_count) . ' results found.';
 
-/* The below retrieves all rows where the item title contains the phrase the user searches,
-  belong to the category the user selects and are ordered by the users preference from the options. If no category
-  or search term is entered then they are, by default, set to %% which when used with the WHERE + LIKE
-  Clause selects all remaining options. Pagination means only the user selected number of items are return by each query,
-   not the total number of items */
+
 
  $search = $mysqli->prepare("SELECT i.itemID, i.title, i.description, b.bidValue, i.closeDate, b.bidID FROM Items i, Bids b
  WHERE i.highestbidID = b.bidID AND i.title LIKE ? AND i.catID LIKE ? ORDER BY $ordering LIMIT $limit OFFSET $offset;");
@@ -201,9 +199,8 @@ if (isset($_SESSION["fail"])){
 
  $search_got = $search->get_result();
 
-
  if(empty(mysqli_num_rows($search_got))){
- echo ' Sorry, there are no listings that match your search, please alter your search criteria or return to:  <a class="page-link" href = "browse.php">Browse Catalog</a>';
+ echo 'Sorry, there are no listings that match your search, please alter your search criteria or return to:  <a class="page-link" href = "browse.php">Browse Catalog</a>';
  }
 
 
@@ -229,15 +226,16 @@ if (isset($_SESSION["fail"])){
 
 
   }
- $search_got->close();
- $search->close();
+
 
 
 
   /* For the purposes of pagination, it would also be helpful to know the
      total number of results that satisfy the above query */
 
-
+  //Elina - copy this query to use in mylistings.php
+  $stmt1 = "SELECT i.itemID, i.title, i.description, b.bidValue, i.closeDate, b.bidID FROM Items i, Bids b WHERE i.highestbidID = b.bidID ORDER BY itemID DESC";
+  $result1 = mysqli_query($connection, $stmt1);
 
 
   $num_results = mysqli_num_rows($search_got_count);
@@ -349,7 +347,7 @@ if (isset($_SESSION["fail"])){
 </div>
 
 
-
+<?php //include_once("sales_function.php")?>
 <?php include_once("footer.php");
 include_once("sales_function.php");
 ?>

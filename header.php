@@ -3,9 +3,9 @@
   // But eventually, with a database, these should be set automatically
   // ONLY after the user's login credentials have been verified via a
   // database query.
-  session_start([
-    'cookie_lifetime' => 86400,
-]);
+  if (session_status() == PHP_SESSION_NONE){
+    session_start();
+  }
 
   // if ($_SESSION['logged_in']==true) {
   // $_SESSION['logged_in'] = false;}
@@ -26,7 +26,7 @@
   <!-- Custom CSS file -->
   <link rel="stylesheet" href="css/custom.css">
 
-  <title>[My Auction Site] <!--CHANGEME!--></title>
+  <title>The Queries Pharmaceuticals</title>
 </head>
 
 
@@ -34,7 +34,7 @@
 
 <!-- Navbars -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light mx-2">
-  <a class="navbar-brand" href="#">Pharmaceuticals by The Queries <!--CHANGEME!--></a>
+  <a class="navbar-brand" href="#">Pharmaceuticals by The Queries</a>
   <ul class="navbar-nav ml-auto">
     <li class="nav-item">
 

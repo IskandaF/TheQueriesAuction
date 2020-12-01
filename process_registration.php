@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 	    $stmt="INSERT INTO Users (email, password) VALUES ('".$email."', '".$password."')";
 	    if ($connection->query($stmt) === TRUE) {
 				echo "New record created successfully. <br>";
-          header("refresh:0.01;url=browse.php");
+          header("refresh:2;url=browse.php");
 		} else {
 		  echo "Error: " . $stmt . "<br>" . $connection->error;
 		}
