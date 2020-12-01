@@ -164,7 +164,7 @@ $email->Subject = 'The maximum bid for your item '.$_SESSION["itemtitle"]." has 
 
 
 
-header("refresh:2;url=listing.php" . "?item_id=" . $itemID);
+header("refresh:0.01;url=listing.php" . "?item_id=" . $itemID);
 
       unset($_SESSION["itemdescription"]);
       unset($_SESSION['itemID']);
