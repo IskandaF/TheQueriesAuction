@@ -100,14 +100,14 @@ $salesQuery = "INSERT INTO ExpiredAuctions (catID, closeDate, description, highe
 
 if ($connection->query($salesQuery) === TRUE) {
 
-   // echo $numsales . " new record(s) added to ExpiredAuction table successfully <br>";
+    echo $numsales . " new record(s) added to ExpiredAuction table successfully <br>";
 
     //If successful, remove the ended auctions from the Items table
     $removeQuery = "DELETE FROM Items
                       WHERE closeDate <= CURDATE()";
 
     if ($connection->query($removeQuery) === TRUE) {
-     // echo $numsales . " old record(s) removed from ExpiredAuction table successfully <br>";
+      echo $numsales . " old record(s) removed from Items table successfully <br>";
 
 
       //Update saleSuccess column with 'n' if reservePrice > bidValue or if highest bidderUserID = sellerID, else 'y'
@@ -138,20 +138,20 @@ if ($connection->query($salesQuery) === TRUE) {
                       WHERE itemID IN (
                       SELECT itemID FROM ExpiredAuctions)";
       if ($connection->query($expiredBids) === TRUE) {
-        //echo "Bids for expired items moved to ExpiredBids table <br>";
+        echo "Bids for expired items moved to ExpiredBids table <br>";
 
 
       $removeBids = "DELETE FROM Bids WHERE bidID IN (
                       SELECT bidID FROM ExpiredBids)";
       if ($connection->query($removeBids) === TRUE) {
-        //echo "Bids for expired items removed from Bids table <br> ";
+        echo "Bids for expired items removed from Bids table <br> ";
       } else {
-       //echo "Error: " . $sql . "<br>" . $connection->error;
+        echo "Error: " . $sql . "<br>" . $connection->error;
       }
 
 
     } else {
-      //echo "Error: " . $sql . "<br>" . $connection->error;
+      echo "Error: " . $sql . "<br>" . $connection->error;
     }
 
 
@@ -250,7 +250,7 @@ if ($connection->query($salesQuery) === TRUE) {
 
     } else {
             //If unsuccessful, write a note in the saleslogs.txt file with the error message
-     // echo "Error: " . $sql . "<br>" . $connection->error;
+      echo "Error: " . $sql . "<br>" . $connection->error;
       $myfile = fopen("saleslogs.txt", "a");
       $txt = "Error: " . $sql . "<br>" . $connection->error . " on " . $nowDate;
       fwrite($myfile, "\n". $txt);
@@ -259,7 +259,7 @@ if ($connection->query($salesQuery) === TRUE) {
 
     //If unsuccessful, write a note in the saleslogs.txt file with the error message
 } else {
-   // echo "Error: " . $sql . "<br>" . $connection->error;
+    echo "Error: " . $sql . "<br>" . $connection->error;
     $myfile = fopen("saleslogs.txt", "a");
     $txt = "Error: " . $sql . "<br>" . $connection->error . " on " . $nowDate;
     fwrite($myfile, "\n". $txt);
