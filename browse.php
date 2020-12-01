@@ -1,4 +1,5 @@
-<?php include_once("header.php");
+<?php
+include_once("header.php");
 include_once("mysqli.php");
 if (session_status() == PHP_SESSION_NONE){
   session_start();
@@ -346,5 +347,7 @@ if (isset($_SESSION["fail"])){
 </div>
 
 
-
-<?php include_once("footer.php")?>
+<?php //include_once("sales_function.php")?>
+<?php include_once("footer.php");
+include_once("sales_function.php");
+?>

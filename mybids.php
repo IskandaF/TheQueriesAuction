@@ -6,6 +6,10 @@
   session_start();
 }  ?>
 
+<?php
+//if(isset($_SESSION['logged_in'])){
+
+?>
 <div class="container">
 
 <h2 class="my-3">My bids <a href="browse.php" class="btn btn-outline-secondary btn-sm align-self-right" class="row" style="float: right;" >Start Bidding</a></h2>

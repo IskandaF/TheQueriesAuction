@@ -2,6 +2,16 @@
 <?php require("utilities.php")?>
 <?php include_once("mysqli.php")?>
 
+<?php
+if (isset($_SESSION["success"])){
+  echo '<p style="color:green">'.$_SESSION['success']."</p>\n";
+  unset($_SESSION['success']);
+}
+if (isset($_SESSION["fail"])){
+  echo '<p style="color:red">'.$_SESSION['fail']."</p>\n";
+  unset($_SESSION['fail']);
+}
+?>
 
 <?php
 
@@ -153,7 +163,7 @@
     </div>
 
   </div>
- 
+
 
   <div class="col-sm-4"> <!-- Right col with bidding info -->
 
@@ -275,4 +285,3 @@ function removeFromWatchlist(button) {
 
 } // End of addToWatchlist func
 </script>
-

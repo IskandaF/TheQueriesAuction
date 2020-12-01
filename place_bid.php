@@ -72,6 +72,9 @@ if (isset($_SESSION['logged_in'])) {
       if ($connection->query($stmt4) === TRUE) {
         echo "Bid placed successfully. ";
         echo "<br>";
+        header("location:listing.php" . "?item_id=" . $itemID);
+        $_SESSION['success'] = 'Bid placed successfully';
+
 
         // update highest bid value in Items table
         $updatehighbid = "UPDATE Items AS i
@@ -159,12 +162,16 @@ $email->Subject = 'The maximum bid for your item '.$_SESSION["itemtitle"]." has 
 //   $email->addContent("text/plain", "The maximum bid for your item ".$_SESSION["itemdescription"]." has just been updated to ".$bidValue);
 //   $email->addContent("text/html", "<strong>The maximum bid for your item ".$_SESSION["itemdescription"]." has just been updated to ".$bidValue."</strong>");
 //   sendBidPlacedEmail($email,$sendgrid);
+//header("refresh:2;url=listing.php" . "?item_id=" . $itemID);
+
 
 }
 
 
 
-header("refresh:2;url=listing.php" . "?item_id=" . $itemID);
+//header("refresh:2;url=listing.php" . "?item_id=" . $itemID);
+//header("location:browse.php");
+//echo "listing.php" . "?item_id=" . $itemID;
 
       unset($_SESSION["itemdescription"]);
       unset($_SESSION['itemID']);
@@ -172,29 +179,30 @@ header("refresh:2;url=listing.php" . "?item_id=" . $itemID);
 
           } else {
             //if highestBid in Items not updated
-            echo "Error: " . $sql . "<br>" . $connection->error;
-            header("refresh:2;url=listing.php" . "?item_id=" . $itemID);
+            $_SESSION['fail'] = "Error: " . $sql . "<br>" . $connection->error;
+            header("location:listing.php" . "?item_id=" . $itemID);
           }
 
 
         } else {
           //if new bid not added to Bids
+          $_SESSION['fail'] = 'There was an error.';
           echo "Error: " . $sql . "<br>" . $connection->error;
         }
       } else {
         //if bid lower than previous highest bid
-        echo 'Bid too low. Please bid higher than £' . $_SESSION['currentPrice'];
-        header("refresh:2;url=listing.php" . "?item_id=" . $itemID);
+        $_SESSION['fail'] = 'Bid too low. Please bid higher than £' . $_SESSION['currentPrice'];
+        header("location:listing.php" . "?item_id=" . $itemID);
       }
     } else {
-      echo 'You cannot bid on your own item!';
-      header("refresh:2;url=listing.php" . "?item_id=" . $itemID);
+      $_SESSION['fail'] = 'You cannot bid on your own item!';
+      header("location:listing.php" . "?item_id=" . $itemID);
     }
 
 
   } else {
     //if user not logged in
-    echo 'Please log in.';
+    $_SESSION['fail'] = 'Please log in.';
     header("refresh:2;url=browse.php");
   }
 

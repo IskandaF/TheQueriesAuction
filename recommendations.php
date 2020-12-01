@@ -1,7 +1,8 @@
 <?php include_once("header.php")?>
 <?php require("utilities.php")?>
-<?php require("mysqli.php")?>
+<?php include_once("mysqli.php")?>
 <?php require("login_result.php")?>
+
 <?php
 if (session_status() == PHP_SESSION_NONE){
   session_start();
@@ -190,8 +191,7 @@ if(!empty($AU_result)){
       }
     }
    else{
-      echo '<button style="color:white;background:green;margin-top:60px;margin-left:60px;" type="button" class="btn nav-link" data-toggle="modal" data-target="#loginModal">Please Login</button>';
-
+     echo '<button style="color:white;background:green;margin-top:60px;margin-left:60px;" type="button" class="btn nav-link" data-toggle="modal" data-target="#loginModal">Please Login</button>';
 
 }
 ?>
