@@ -25,8 +25,11 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a574ce25-3cde-4b2e-8fa5-50edc60b27e1" name="Default Changelist" comment="Login takes you straight to browse">
-      <change beforePath="$PROJECT_DIR$/process_registration.php" beforeDir="false" afterPath="$PROJECT_DIR$/process_registration.php" afterDir="false" />
+    <list default="true" id="a574ce25-3cde-4b2e-8fa5-50edc60b27e1" name="Default Changelist" comment="Redirect to browse quicker when creating account">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/browse.php" beforeDir="false" afterPath="$PROJECT_DIR$/browse.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sales_function.php" beforeDir="false" afterPath="$PROJECT_DIR$/sales_function.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saleslogs.txt" beforeDir="false" afterPath="$PROJECT_DIR$/saleslogs.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,7 +71,14 @@
       <option name="project" value="LOCAL" />
       <updated>1606754831240</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Redirect to browse quicker when creating account">
+      <created>1606775953710</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1606775953710</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -97,7 +107,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Login takes you straight to browse" />
-    <option name="LAST_COMMIT_MESSAGE" value="Login takes you straight to browse" />
+    <MESSAGE value="Redirect to browse quicker when creating account" />
+    <option name="LAST_COMMIT_MESSAGE" value="Redirect to browse quicker when creating account" />
   </component>
   <component name="WindowStateProjectService">
     <state x="100" y="123" width="1240" height="677" key="DiffContextDialog" timestamp="1606741612109">
